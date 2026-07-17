@@ -12,7 +12,14 @@ const OPTIONS_SCENE: String = "res://scenes/game_scene/scene_1.tscn"
 @export var menu_bpm: float = 115.0 # Set this to your song's actual BPM
 @export var fade_time: float = 5.0
 
+@onready var beat_flasher: ColorRect = $BeatFlasher
+var flash_tween: Tween
+
+@onready var camera: Camera2D = $Camera2D
+var camera_tween: Tween
+
 func _ready() -> void:
+	camera.global_position = get_viewport_rect().size / 2.0
 	# 1. Start the menu music looping
 	if menu_music != null:
 		# 2. Feed the song and BPM to the global Conductor
@@ -26,7 +33,47 @@ func _ready() -> void:
 	
 	# 3. Optional: Grab focus on the first button so keyboard/controller navigation works!
 	story_btn.grab_focus()
+	
+	if Conductor:
+		Conductor.beat_hit.connect(_on_conductor_beat_hit)
+		
+func _on_conductor_beat_hit(current_beat: int) -> void:
+	# Flash the background every beat!
+	# (You can also change this to 'current_beat % 2 == 0' to flash only on every 2nd beat)
+	flash_screen()
+	bump_camera() 
 
+func bump_camera() -> void:
+	if not camera:
+		return
+
+	if camera_tween and camera_tween.is_running():
+		camera_tween.kill()
+
+	# Instantly zoom the camera slightly in (normal is Vector2(1, 1))
+	camera.zoom = Vector2(1.03, 1.03)
+
+	# Smoothly glide the zoom back to 1.0 over the course of the beat
+	camera_tween = create_tween()
+	camera_tween.tween_property(camera, "zoom", Vector2.ONE, 0.3)\
+		.set_trans(Tween.TRANS_SINE)\
+		.set_ease(Tween.EASE_OUT)
+func flash_screen() -> void:
+	if not is_inside_tree() or not beat_flasher:
+		return
+		
+	if flash_tween and flash_tween.is_running():
+		flash_tween.kill()
+		
+	# Instantly set the overlay to a subtle transparent white (0.08 alpha)
+	# This avoids blinding the player while creating a clear "pulse"
+	beat_flasher.color.a = 0.08
+	
+	# Smoothly fade it back to 0
+	flash_tween = create_tween()
+	flash_tween.tween_property(beat_flasher, "color:a", 0.0, 0.25)\
+		.set_trans(Tween.TRANS_SINE)\
+		.set_ease(Tween.EASE_OUT)
 func _on_story_pressed() -> void:
 	_trigger_transition_to(GAMEPLAY_SCENE, story_btn)
 

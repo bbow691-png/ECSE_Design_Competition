@@ -3,7 +3,6 @@
 [ext_resource type="PackedScene" uid="uid://cwh63icw3dh4k" path="res://scenes/menu/S.tscn" id="1_klgdb"]
 [ext_resource type="Script" uid="uid://yuht10q6bf3w" path="res://scenes/menu/menu.gd" id="1_mcvr8"]
 [ext_resource type="Texture2D" uid="uid://b2esn2h6o5oi2" path="res://assets/images/grass.jpg" id="2_e0arn"]
-[ext_resource type="AudioStream" uid="uid://b0hgisfov3yh7" path="res://assets/music/Funkin' Sound Team - Friday Night Funkin' OST Expansion Vol.1 - 01 Results - Excellent.mp3" id="5_y1o0p"]
 
 [node name="Menu" type="Control" unique_id=2015582089]
 layout_mode = 3
@@ -15,8 +14,6 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mcvr8")
-menu_music = ExtResource("5_y1o0p")
-menu_bpm = 128.0
 
 [node name="Background" type="TextureRect" parent="." unique_id=1052050739]
 layout_mode = 1
@@ -34,6 +31,7 @@ grow_vertical = 2
 texture = ExtResource("2_e0arn")
 
 [node name="MenuContainer" type="VBoxContainer" parent="." unique_id=1989856479]
+z_index = 4
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -43,6 +41,7 @@ offset_right = 270.0
 offset_bottom = -51.0
 grow_vertical = 2
 scale = Vector2(3, 3)
+mouse_filter = 2
 theme_override_constants/separation = 36
 
 [node name="Play" parent="MenuContainer" unique_id=1223205733 instance=ExtResource("1_klgdb")]
@@ -56,3 +55,17 @@ text = "OPTIONS"
 [node name="Exit" parent="MenuContainer" unique_id=89467037 instance=ExtResource("1_klgdb")]
 layout_mode = 2
 text = "Exit"
+
+[node name="BeatFlasher" type="ColorRect" parent="." unique_id=595401684]
+z_index = 5
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_behavior_recursive = 1
+mouse_force_pass_scroll_events = false
+color = Color(1, 1, 1, 0)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=558790325]

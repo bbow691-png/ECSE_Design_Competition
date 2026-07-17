@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cf1lvwaea1c7s"]
+
+[ext_resource type="Script" uid="uid://dyn123u280ct3" path="res://scripts/song.gd" id="1_vgx8i"]
+
+[node name="Song" type="Node" unique_id=837682402]
+script = ExtResource("1_vgx8i")
+
+[node name="SongObj" type="AudioStreamPlayer" parent="." unique_id=1008962268]

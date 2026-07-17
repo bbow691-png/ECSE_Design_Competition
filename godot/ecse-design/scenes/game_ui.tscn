@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://ewc68dr5cv17"]
+
+[ext_resource type="PackedScene" uid="uid://doapvkvqtqmb" path="res://scenes/drum_pad.tscn" id="1_yubou"]
+
+[node name="GameUI" type="Control" unique_id=2092615904]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -576.0
+offset_top = -648.0
+offset_right = -576.0
+offset_bottom = -648.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="DrumPad" parent="." unique_id=1222817773 instance=ExtResource("1_yubou")]
+layout_mode = 1
+offset_left = -375.0
+offset_top = -100.0
+offset_right = -25.0
+offset_bottom = 250.0
+
+[node name="DrumPad2" parent="." unique_id=808055484 instance=ExtResource("1_yubou")]
+layout_mode = 1
+offset_left = -275.0
+offset_top = 0.0
+offset_right = 75.0
+offset_bottom = 350.0
+input_action = "low_left"
+sound_name = "snare"
+
+[node name="DrumPad3" parent="." unique_id=877490846 instance=ExtResource("1_yubou")]
+layout_mode = 1
+offset_left = -100.0
+offset_top = 0.0
+offset_right = 250.0
+offset_bottom = 350.0
+input_action = "low_righ"
+sound_name = "tom"
+
+[node name="DrumPad4" parent="." unique_id=622295038 instance=ExtResource("1_yubou")]
+layout_mode = 1
+offset_left = 0.0
+offset_top = -100.0
+offset_right = 350.0
+offset_bottom = 250.0
+input_action = "upp_righ"
+sound_name = "crash"

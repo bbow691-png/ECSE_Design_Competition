@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://clronqky8n3rt"]
+
+[ext_resource type="Texture2D" uid="uid://dbeot57mkdvyk" path="res://assets/images/WilliamLee.png" id="1_3vyb7"]
+
+[node name="Player" type="Sprite2D" unique_id=1612797484]
+texture = ExtResource("1_3vyb7")

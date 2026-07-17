@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://ewc68dr5cv17"]
+
+[ext_resource type="PackedScene" uid="uid://doapvkvqtqmb" path="res://scenes/drum_pad.tscn" id="1_yubou"]
+
+[node name="GameUI" type="Control" unique_id=2092615904]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DrumPad" parent="." unique_id=1222817773 instance=ExtResource("1_yubou")]
+layout_mode = 0
+
+[node name="DrumPad2" parent="." unique_id=808055484 instance=ExtResource("1_yubou")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -128.0
+offset_bottom = 0.0
+grow_vertical = 0
+input_action = "low_left"
+
+[node name="DrumPad3" parent="." unique_id=877490846 instance=ExtResource("1_yubou")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -128.0
+offset_top = -128.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 0
+grow_vertical = 0
+input_action = "low_righ"
+
+[node name="DrumPad4" parent="." unique_id=622295038 instance=ExtResource("1_yubou")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -128.0
+offset_right = 0.0
+grow_horizontal = 0
+input_action = "upp_righ"

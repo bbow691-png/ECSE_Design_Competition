@@ -2,22 +2,48 @@
 
 [ext_resource type="PackedScene" uid="uid://cwh63icw3dh4k" path="res://scenes/menu/S.tscn" id="1_klgdb"]
 [ext_resource type="Script" uid="uid://yuht10q6bf3w" path="res://scenes/menu/menu.gd" id="1_mcvr8"]
+[ext_resource type="AudioStream" uid="uid://xp0wljlggmi2" path="res://assets/music/CastleCrashersMap.mp3" id="2_037ec"]
+[ext_resource type="Texture2D" uid="uid://b2esn2h6o5oi2" path="res://assets/images/grass.jpg" id="2_e0arn"]
 
 [node name="Menu" type="Control" unique_id=2015582089]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_mcvr8")
+menu_music = ExtResource("2_037ec")
+menu_bpm = 128.0
 
 [node name="Background" type="TextureRect" parent="." unique_id=1052050739]
-layout_mode = 0
-offset_right = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -306.0
+offset_top = -229.5
+offset_right = 306.0
+offset_bottom = 229.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_e0arn")
 
 [node name="MenuContainer" type="VBoxContainer" parent="." unique_id=1989856479]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -82.5
+offset_right = 270.0
+offset_bottom = 82.5
+grow_vertical = 2
+scale = Vector2(3, 3)
+theme_override_constants/separation = 36
 
 [node name="Play" parent="MenuContainer" unique_id=1223205733 instance=ExtResource("1_klgdb")]
 layout_mode = 2

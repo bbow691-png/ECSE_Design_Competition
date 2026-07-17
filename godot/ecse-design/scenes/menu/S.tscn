@@ -1,5 +1,9 @@
 [gd_scene format=3 uid="uid://cwh63icw3dh4k"]
 
+[ext_resource type="Script" uid="uid://dcwkdabfup5ey" path="res://scenes/menu/button.gd" id="1_e4ekj"]
+
 [node name="Button" type="Button" unique_id=1223205733]
-offset_right = 8.0
-offset_bottom = 8.0
+offset_right = 540.0
+offset_bottom = 31.0
+text = "fdsagdsg"
+script = ExtResource("1_e4ekj")

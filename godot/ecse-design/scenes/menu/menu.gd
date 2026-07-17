@@ -7,11 +7,16 @@ const OPTIONS_SCENE: String = "res://scenes/game_scene/scene_1.tscn"
 @onready var story_btn: Button = $MenuContainer/Play
 @onready var options_btn: Button = $MenuContainer/Options
 @onready var exit_btn: Button = $MenuContainer/Exit
-
+# 1. Drag and drop your menu music file here in the Inspector!
+@export var menu_music: AudioStream
+@export var menu_bpm: float = 115.0 # Set this to your song's actual BPM
 func _ready() -> void:
 	# 1. Start the menu music looping
-	$MenuMusic.play()
-	
+	if menu_music != null:
+		# 2. Feed the song and BPM to the global Conductor
+		Conductor.play_song(menu_music, menu_bpm)
+	else:
+		push_warning("Forgot to assign 'menu_music' in the Inspector!")
 	# 2. Connect the button click signals
 	story_btn.pressed.connect(_on_story_pressed)
 	options_btn.pressed.connect(_on_options_pressed)

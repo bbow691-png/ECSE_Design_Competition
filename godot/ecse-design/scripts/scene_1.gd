@@ -7,13 +7,13 @@ var base_scale: Vector2 = Vector2(1.0, 1.0)
 # A modifier variable that tweens back to 0
 var zoom_pulse: float = 0.0
 
+@export var level_music:AudioStream 
+@export var bpm:int = 128
+@export var fade_time:float = 1.0
 func _ready() -> void:
 	# Connect to your sound node's signal
-	%Song.beat_hit.connect(_on_beat_hit)
 	
-	# Spawn beats
-	
-
+	Conductor.play_with_fade(level_music,bpm,fade_time)
 func _process(_delta: float) -> void:
 	# BACKGROUND: Multiplied by 0.3 (moves/zooms very subtly)
 	background.scale = base_scale + Vector2(zoom_pulse * 0.01, zoom_pulse * 0.01)

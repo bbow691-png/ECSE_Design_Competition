@@ -10,11 +10,13 @@ const OPTIONS_SCENE: String = "res://scenes/game_scene/scene_1.tscn"
 # 1. Drag and drop your menu music file here in the Inspector!
 @export var menu_music: AudioStream
 @export var menu_bpm: float = 115.0 # Set this to your song's actual BPM
+@export var fade_time: float = 5.0
+
 func _ready() -> void:
 	# 1. Start the menu music looping
 	if menu_music != null:
 		# 2. Feed the song and BPM to the global Conductor
-		Conductor.play_song(menu_music, menu_bpm)
+		Conductor.play_with_fade(menu_music, menu_bpm,fade_time)
 	else:
 		push_warning("Forgot to assign 'menu_music' in the Inspector!")
 	# 2. Connect the button click signals

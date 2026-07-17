@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://dpiqaw6wiskje"]
+
+[ext_resource type="PackedScene" uid="uid://cwh63icw3dh4k" path="res://scenes/menu/S.tscn" id="1_klgdb"]
+[ext_resource type="Script" uid="uid://yuht10q6bf3w" path="res://scenes/menu/menu.gd" id="1_mcvr8"]
+
+[node name="Menu" type="Control" unique_id=2015582089]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_mcvr8")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1052050739]
+layout_mode = 0
+offset_right = 40.0
+
+[node name="MenuContainer" type="VBoxContainer" parent="." unique_id=1989856479]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Play" parent="MenuContainer" unique_id=1223205733 instance=ExtResource("1_klgdb")]
+layout_mode = 2
+text = "PLAY"
+
+[node name="Options" parent="MenuContainer" unique_id=1806038729 instance=ExtResource("1_klgdb")]
+layout_mode = 2
+text = "OPTIONS"
+
+[node name="Exit" parent="MenuContainer" unique_id=89467037 instance=ExtResource("1_klgdb")]
+layout_mode = 2
+text = "Exit"
+
+[node name="MenuMusic" type="AudioStreamPlayer" parent="." unique_id=786049774]

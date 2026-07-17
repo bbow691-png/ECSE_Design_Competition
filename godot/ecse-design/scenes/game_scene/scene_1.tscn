@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://chkj2w7ppx8pc"]
+
+[ext_resource type="Script" uid="uid://cd2qonc5otexv" path="res://scripts/scene_1.gd" id="1_d7a6c"]
+[ext_resource type="PackedScene" uid="uid://cf1lvwaea1c7s" path="res://scenes/game_scene/song.tscn" id="2_g2j0d"]
+[ext_resource type="AudioStream" uid="uid://xp0wljlggmi2" path="res://assets/music/CastleCrashersMap.mp3" id="3_p837x"]
+[ext_resource type="Texture2D" uid="uid://b2esn2h6o5oi2" path="res://assets/images/grass.jpg" id="4_r02jg"]
+[ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="5_ig65t"]
+[ext_resource type="Texture2D" uid="uid://b1m1x4y76nr0l" path="res://assets/images/Panda.png" id="6_lv108"]
+[ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
+
+[node name="Scene1" type="Node2D" unique_id=1132201814]
+script = ExtResource("1_d7a6c")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1418258072]
+unique_name_in_owner = true
+
+[node name="Song" parent="." unique_id=837682402 instance=ExtResource("2_g2j0d")]
+unique_name_in_owner = true
+BPM = 128.0
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Song" unique_id=720437478]
+stream = ExtResource("3_p837x")
+volume_db = -20.0
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=1854626790]
+follow_viewport_enabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Background" unique_id=2101240512]
+z_index = -1
+position = Vector2(-6.000061, -12)
+scale = Vector2(1.870915, 1.385621)
+texture = ExtResource("4_r02jg")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=304241399]
+layer = 5
+follow_viewport_enabled = true
+
+[node name="Foreground" type="CanvasLayer" parent="." unique_id=998582307]
+layer = 3
+follow_viewport_enabled = true
+
+[node name="Player" parent="Foreground" unique_id=1612797484 instance=ExtResource("5_ig65t")]
+z_index = 998
+scale = Vector2(0.1, 0.1)
+
+[node name="Sprite2D" type="Sprite2D" parent="Foreground" unique_id=1718432161]
+position = Vector2(-270.99997, -4.9999995)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("6_lv108")
+
+[node name="GameUI" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
+z_index = 15
+offset_left = -947.0
+offset_top = -1080.0
+offset_right = -947.0
+offset_bottom = -1080.0

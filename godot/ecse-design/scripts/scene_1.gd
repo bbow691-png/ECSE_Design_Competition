@@ -10,6 +10,9 @@ var zoom_pulse: float = 0.0
 func _ready() -> void:
 	# Connect to your sound node's signal
 	%Song.beat_hit.connect(_on_beat_hit)
+	
+	# Spawn beats
+	
 
 func _process(_delta: float) -> void:
 	# BACKGROUND: Multiplied by 0.3 (moves/zooms very subtly)

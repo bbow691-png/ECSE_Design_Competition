@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ECSE_DESIGN"
-run/main_scene="res://scenes/walk_around.tscn"
+run/main_scene="res://scenes/game_scene/walk_around.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -21,6 +21,8 @@ buses/default_bus_layout="uid://btvtfhs1vklab"
 
 [display]
 
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

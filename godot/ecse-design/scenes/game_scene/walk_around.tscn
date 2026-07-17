@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://c53027kp8cosb"]
+
+[ext_resource type="PackedScene" uid="uid://dpiqaw6wiskje" path="res://scenes/menu/menu.tscn" id="1_soihe"]
+
+[node name="Game" type="Node2D" unique_id=79489902]
+
+[node name="MusicCreator" type="Node2D" parent="." unique_id=1130286805]
+
+[node name="Menu" parent="." unique_id=357476124 instance=ExtResource("1_soihe")]

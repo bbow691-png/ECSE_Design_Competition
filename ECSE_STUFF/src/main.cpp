@@ -1,8 +1,5 @@
 #include <Arduino.h>
 #include <driver/i2s.h>
-#include <WiFi.h>
-#include <WiFiAP.h>
-#include <WiFiUdp.h>
 
 //------------------------------Pin Definitions--------------------------------//
 #define I2S_BCK_PIN   26    //Bit clock pin
@@ -21,20 +18,18 @@
 #define DMA_BUF_COUNT 16        //Direct memory access buffer count
 #define DMA_BUF_LEN   128       //Direct memory access buffer length
 
-//------------------------------WiFi Access Point Config-----------------------//
-#define AP_SSID      "DrumCabinet"  //Hotspot name
-#define AP_PASS      "ecse2026"     //Hotspot password
-#define UDP_PORT     4210           //UDP port for audio streaming
-#define UDP_BUF_SIZE 1024           //UDP receive buffer size (bytes)
+//------------------------------Serial Config-----------------------------------//
+#define SERIAL_BAUD    921600
+//Default HardwareSerial RX buffer is only 256B. PC sends ~1KB audio chunks
+//every ~11ms, so without a bigger buffer bytes get dropped between loop()
+//passes long before we ever get a chance to read them.
+#define SERIAL_RX_BUF  4096
+#define AUDIO_CHUNK    512      //Max bytes pulled from Serial per loop pass
 
 //------------------------------Piezo Config-----------------------------------//
 #define STRIKE_THRESHOLD  500   //ADC value to trigger a hit (0-4095)
 #define DEBOUNCE_MS       50    //Minimum time between strikes (ms)
 #define HOLD_MS           20    //How long to hold triggered state (ms)
-
-//------------------------------Global Objects---------------------------------//
-WiFiUDP udp;
-uint8_t udp_buf[UDP_BUF_SIZE];
 
 //Struct to track state of each piezo channel
 struct PiezoChannel {
@@ -55,12 +50,6 @@ PiezoChannel channels[] = {
 
 const int NUM_CHANNELS = 4;
 
-
-
-
-
-
-
 //------------------------------I2S Configuration---------------------------------//
 void i2s_init() {
     i2s_config_t cfg = {
@@ -73,7 +62,7 @@ void i2s_init() {
         .dma_buf_count        = DMA_BUF_COUNT,
         .dma_buf_len          = DMA_BUF_LEN,
         .use_apll             = true,           //Use audio PLL for lower jitter
-        .tx_desc_auto_clear   = true            //Clear DMA on underrun
+        .tx_desc_auto_clear   = true             //Clear DMA on underrun
     };
 
     i2s_pin_config_t pins = {
@@ -87,29 +76,7 @@ void i2s_init() {
     i2s_driver_install(I2S_PORT, &cfg, 0, NULL);
     i2s_set_pin(I2S_PORT, &pins);
     i2s_zero_dma_buffer(I2S_PORT);
-    Serial.println("I2S ready");
 }
-
-//------------------------------WiFi Access Point Setup------------------------------//
-//------------------------------hang time check for ESP network----------------------//
-void ap_init() {
-    WiFi.mode(WIFI_AP);  // Explicitly set AP mode first
-    delay(100);
-    bool result = WiFi.softAP(AP_SSID, AP_PASS);
-    if (!result) {
-        Serial.println("AP failed to start!");
-        return;
-    }
-    Serial.printf("Access Point: %s\n", AP_SSID);
-    Serial.printf("AP IP: %s\n", WiFi.softAPIP().toString().c_str());
-    udp.begin(UDP_PORT);
-    Serial.printf("Listening on UDP port %d\n", UDP_PORT);
-}
-//--------------------------------------------------------------------------------//
-
-
-
-
 
 //------------------------------Piezo Strike Detection-------------------------//
 void check_piezos() {
@@ -150,9 +117,43 @@ void check_piezos() {
     }
 }
 
+//------------------------------Serial Audio Ingestion--------------------------//
+//Pulls whatever bytes are already sitting in the RX buffer without blocking,
+//so a slow/empty audio link never stalls piezo polling. Only whole 16-bit
+//stereo frames (4 bytes: L16+R16) are handed to I2S so a read landing
+//mid-frame doesn't leave the L/R channels permanently swapped.
+static uint8_t audio_buf[AUDIO_CHUNK];
+static size_t audio_buf_len = 0;
+
+void pump_audio() {
+    int avail = Serial.available();
+    if (avail <= 0) return;
+
+    size_t space = sizeof(audio_buf) - audio_buf_len;
+    size_t to_read = min((size_t)avail, space);
+    if (to_read > 0) {
+        audio_buf_len += Serial.readBytes(audio_buf + audio_buf_len, to_read);
+    }
+
+    size_t frame_bytes = audio_buf_len - (audio_buf_len % 4);
+    if (frame_bytes == 0) return;
+
+    size_t written = 0;
+    //ticks_to_wait = 0: never block the loop waiting on the DMA queue.
+    //The DMA buffer holds ~90ms of audio so this only matters if playback
+    //is already badly behind, in which case a momentary channel swap is an
+    //acceptable trade-off against freezing piezo detection.
+    i2s_write(I2S_PORT, audio_buf, frame_bytes, &written, 0);
+
+    size_t remainder = audio_buf_len - written;
+    if (remainder > 0) memmove(audio_buf, audio_buf + written, remainder);
+    audio_buf_len = remainder;
+}
+
 //------------------------------Setup and Main Loop----------------------------//
 void setup() {
-    Serial.begin(115200);
+    Serial.setRxBufferSize(SERIAL_RX_BUF);
+    Serial.begin(SERIAL_BAUD);
     Serial.println("Drum Cabinet starting...");
 
     //GPIO 32/33 need explicit pinMode, 34/35 are input only by default
@@ -160,23 +161,12 @@ void setup() {
     pinMode(PIEZO_4, INPUT);
 
     i2s_init();
-    ap_init();
 
     Serial.println("Ready");
 }
 
 void loop() {
-    // Only parse if a packet is actually available
-    if (udp.available()) {
-        int packet_size = udp.parsePacket();
-        if (packet_size > 0) {
-            int len = udp.read(udp_buf, UDP_BUF_SIZE);
-            if (len > 0) {
-                size_t bytes_written = 0;
-                i2s_write(I2S_PORT, udp_buf, len, &bytes_written, portMAX_DELAY);
-            }
-        }
-    }
+    pump_audio();
     check_piezos();
 }
 

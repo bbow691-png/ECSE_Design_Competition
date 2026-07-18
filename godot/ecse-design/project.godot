@@ -22,6 +22,7 @@ buses/default_bus_layout="uid://btvtfhs1vklab"
 [autoload]
 
 Conductor="*uid://cw7n0rjke4iao"
+PiezoInput="*res://scripts/piezo_input.gd"
 
 [display]
 

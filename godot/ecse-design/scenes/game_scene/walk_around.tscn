@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c53027kp8cosb"]
 
 [ext_resource type="PackedScene" uid="uid://dpiqaw6wiskje" path="res://scenes/menu/menu.tscn" id="1_soihe"]
+[ext_resource type="AudioStream" uid="uid://b0hgisfov3yh7" path="res://assets/music/Funkin' Sound Team - Friday Night Funkin' OST Expansion Vol.1 - 01 Results - Excellent.mp3" id="2_j6kwb"]
 
 [node name="Game" type="Node2D" unique_id=79489902]
 
@@ -15,3 +16,4 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+menu_music = ExtResource("2_j6kwb")

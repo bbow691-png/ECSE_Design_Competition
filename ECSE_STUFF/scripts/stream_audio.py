@@ -8,11 +8,15 @@ BAUD = 921600
 SAMPLE_RATE = 22050
 CHUNK_SIZE = 256
 
+
+#Im not even going to pretend I know whats happening here, this some wild shit
 def stream_loopback(port, baud):
     speaker = sc.default_speaker()
     mic = sc.get_microphone(speaker.id, include_loopback=True)
-    print(f"Capturing from: {speaker.name}")
-    print(f"Sample rate: {SAMPLE_RATE}Hz | Port: {port}")
+    print(f"Capturing from: {speaker.name}")                #Prints the name of the captured sound device
+    print(f"Sample rate: {SAMPLE_RATE}Hz | Port: {port}")   #Prints the captured samplerate and used port
+    
+    
     with serial.Serial(port, baud, timeout=1) as ser:
         time.sleep(2)
         print("Streaming started — press Ctrl+C to stop")
@@ -22,6 +26,7 @@ def stream_loopback(port, baud):
                 data_int16 = (data * 32767).astype(np.int16)
                 ser.write(data_int16.tobytes())
 
+#some error or exception handling, idk tbh.
 if __name__ == "__main__":
     try:
         stream_loopback(PORT, BAUD)

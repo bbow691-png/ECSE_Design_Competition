@@ -22,7 +22,11 @@ buses/default_bus_layout="uid://btvtfhs1vklab"
 [autoload]
 
 Conductor="*uid://cw7n0rjke4iao"
+<<<<<<< HEAD
 PiezoInput="*res://scripts/piezo_input.gd"
+=======
+SceneTransition="*uid://buyk2dc75ft87"
+>>>>>>> 290c3ff (Improved scene transition animation)
 
 [display]
 

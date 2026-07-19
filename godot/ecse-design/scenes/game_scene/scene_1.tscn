@@ -3,8 +3,7 @@
 [ext_resource type="Script" uid="uid://cd2qonc5otexv" path="res://scripts/scene_1.gd" id="1_d7a6c"]
 [ext_resource type="AudioStream" uid="uid://xp0wljlggmi2" path="res://assets/music/CastleCrashersMap.mp3" id="3_p837x"]
 [ext_resource type="Texture2D" uid="uid://b2esn2h6o5oi2" path="res://assets/images/grass.jpg" id="4_r02jg"]
-[ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="5_ig65t"]
-[ext_resource type="Texture2D" uid="uid://b1m1x4y76nr0l" path="res://assets/images/Panda.png" id="6_lv108"]
+[ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
 
 [node name="Scene1" type="Node2D" unique_id=1132201814]
@@ -32,18 +31,12 @@ follow_viewport_enabled = true
 layer = 3
 follow_viewport_enabled = true
 
-[node name="Player" parent="Foreground" unique_id=1612797484 instance=ExtResource("5_ig65t")]
-z_index = 998
-scale = Vector2(0.1, 0.1)
-
-[node name="Sprite2D" type="Sprite2D" parent="Foreground" unique_id=1718432161]
-position = Vector2(-270.99997, -4.9999995)
-scale = Vector2(0.1, 0.1)
-texture = ExtResource("6_lv108")
-
 [node name="GameUI" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
 z_index = 15
 offset_left = -947.0
 offset_top = -1080.0
 offset_right = -947.0
 offset_bottom = -1080.0
+
+[node name="FrogChar" parent="Foreground" unique_id=128235790 instance=ExtResource("5_52ejm")]
+scale = Vector2(0.1, 0.1)

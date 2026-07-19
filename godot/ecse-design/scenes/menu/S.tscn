@@ -2,9 +2,21 @@
 
 [ext_resource type="Script" uid="uid://dcwkdabfup5ey" path="res://scenes/menu/button.gd" id="1_e4ekj"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ix81m"]
+bg_color = Color(0.54509807, 0, 0.54509807, 0.7058824)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 3
+border_width_bottom = 4
+border_color = Color(1, 0, 0.49803922, 0.7058824)
+shadow_color = Color(1, 0, 0.49803922, 1)
+shadow_size = 8
+
 [node name="Button" type="Button" unique_id=1223205733]
 z_index = 9
+offset_top = -73.0
 offset_right = 540.0
 offset_bottom = 31.0
+theme_override_styles/focus = SubResource("StyleBoxFlat_ix81m")
 text = "fdsagdsg"
 script = ExtResource("1_e4ekj")

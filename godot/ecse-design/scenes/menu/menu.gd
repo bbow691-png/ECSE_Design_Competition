@@ -85,6 +85,7 @@ func _on_exit_pressed() -> void:
 	get_tree().quit()
 
 # Handles the classic FNF "flash button, play sound, then change scene" sequence
+
 func _trigger_transition_to(target_scene: String, clicked_button: Button) -> void:
 	# Disable all buttons so the player can't double-click anything during transition
 	for button in $MenuContainer.get_children():
@@ -94,15 +95,12 @@ func _trigger_transition_to(target_scene: String, clicked_button: Button) -> voi
 	# Play a "confirm" sound effect if you have one
 	# $ConfirmSound.play()
 
-	# Create a quick flashing effect using a Tween
-	var tween: Tween = create_tween()
-	# Rapidly change the button's modulation color (flash white/invisible/white)
-	tween.tween_property(clicked_button, "modulate", Color(2, 2, 2, 1), 0.1) # Bright flash
-	tween.tween_property(clicked_button, "modulate", Color(1, 1, 1, 0), 0.1) # Fade out slightly
-	tween.tween_property(clicked_button, "modulate", Color(2, 2, 2, 1), 0.1)
-	tween.tween_property(clicked_button, "modulate", Color(1, 1, 1, 1), 0.1) # Back to normal
+	# --- THE FIX: Call the custom flash function instead of using modulate! ---
+	if clicked_button.has_method("confirm_flash"):
+		clicked_button.confirm_flash()
 
-	# Wait 1.0 second for the sound and flash to finish, then change scene
-	await get_tree().create_timer(1.0).timeout
+	# Wait just a tiny bit for the flash to register visually (0.4 seconds)
+	await get_tree().create_timer(0.4).timeout
 	
-	get_tree().change_scene_to_file(target_scene)
+	# Call your global Autoload to handle the fade and scene swap
+	SceneTransition.fade_to_scene(target_scene, 0.5)

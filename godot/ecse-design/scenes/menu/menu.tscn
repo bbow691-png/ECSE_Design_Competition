@@ -2,7 +2,12 @@
 
 [ext_resource type="PackedScene" uid="uid://cwh63icw3dh4k" path="res://scenes/menu/S.tscn" id="1_klgdb"]
 [ext_resource type="Script" uid="uid://yuht10q6bf3w" path="res://scenes/menu/menu.gd" id="1_mcvr8"]
-[ext_resource type="Texture2D" uid="uid://b2esn2h6o5oi2" path="res://assets/images/grass.jpg" id="2_e0arn"]
+[ext_resource type="Texture2D" uid="uid://b34fiwt65wmpl" path="res://assets/Spritesheets/Bamboo_bg.png" id="2_e0arn"]
+[ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="3_037ec"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ix81m"]
+shader = ExtResource("3_037ec")
+shader_parameter/blur_amount = 2.5
 
 [node name="Menu" type="Control" unique_id=2015582089]
 layout_mode = 3
@@ -22,30 +27,52 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -306.0
-offset_top = -229.5
-offset_right = 306.0
-offset_bottom = 229.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_e0arn")
 
+[node name="BackBufferCopy" type="BackBufferCopy" parent="Background" unique_id=1106961158]
+position = Vector2(974.49994, 560)
+scale = Vector2(10.155001, 5.71)
+copy_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Background/BackBufferCopy" unique_id=1169742968]
+material = SubResource("ShaderMaterial_ix81m")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="MenuContainer" type="VBoxContainer" parent="." unique_id=1989856479]
 z_index = 4
 layout_mode = 1
-anchors_preset = 4
+anchors_preset = 8
+anchor_left = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
-offset_top = -216.0
-offset_right = 270.0
-offset_bottom = -51.0
+offset_left = -301.0
+offset_top = -250.0
+offset_right = -101.0
+offset_bottom = -100.0
+grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(3, 3)
 mouse_filter = 2
-theme_override_constants/separation = 36
+theme_override_constants/separation = 30
 
 [node name="Play" parent="MenuContainer" unique_id=1223205733 instance=ExtResource("1_klgdb")]
 layout_mode = 2
+size_flags_stretch_ratio = 5.83
 text = "PLAY"
 
 [node name="Options" parent="MenuContainer" unique_id=1806038729 instance=ExtResource("1_klgdb")]

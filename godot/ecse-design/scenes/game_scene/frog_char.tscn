@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://dtfhytn7tlijr"]
+
+[ext_resource type="Texture2D" uid="uid://chj4xpebnsy0l" path="res://assets/Spritesheets/frog_idle_spritesheet.png" id="1_mwwvo"]
+
+[sub_resource type="Animation" id="Animation_mwwvo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="Animation" id="Animation_1gdt1"]
+resource_name = "idle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 1]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mwwvo"]
+_data = {
+&"RESET": SubResource("Animation_mwwvo"),
+&"idle": SubResource("Animation_1gdt1")
+}
+
+[node name="FrogChar" type="Sprite2D" unique_id=128235790]
+texture = ExtResource("1_mwwvo")
+hframes = 4
+frame = 1
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="." unique_id=1394151842]
+libraries/ = SubResource("AnimationLibrary_mwwvo")
+autoplay = &"idle"
+speed_scale = 0.8

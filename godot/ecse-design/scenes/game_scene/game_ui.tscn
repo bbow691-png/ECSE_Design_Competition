@@ -10,20 +10,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DrumPad" parent="." unique_id=1222817773 instance=ExtResource("1_yubou")]
+[node name="DrumPad3" parent="." unique_id=1222817773 instance=ExtResource("1_yubou")]
 position = Vector2(1507, 942)
 input_action = "upp_righ"
 frame_num = 2
 
-[node name="DrumPad2" parent="." unique_id=808055484 instance=ExtResource("1_yubou")]
+[node name="DrumPad4" parent="." unique_id=808055484 instance=ExtResource("1_yubou")]
 position = Vector2(1690, 947)
 input_action = "low_righ"
 frame_num = 3
 
-[node name="DrumPad3" parent="." unique_id=877490846 instance=ExtResource("1_yubou")]
+[node name="DrumPad2" parent="." unique_id=877490846 instance=ExtResource("1_yubou")]
 position = Vector2(1353, 936)
 input_action = "low_left"
 frame_num = 1
 
-[node name="DrumPad4" parent="." unique_id=622295038 instance=ExtResource("1_yubou")]
+[node name="DrumPad1" parent="." unique_id=622295038 instance=ExtResource("1_yubou")]
 position = Vector2(1163, 931)

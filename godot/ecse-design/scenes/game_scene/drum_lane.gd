@@ -1,7 +1,11 @@
+#I GENIUENLY THINK THIS FILE DOES NOTHING BECAUSE DRUM_PAD.GD SEEMS TO ACTUALLY CONTROL THIS BS
+
+
 extends Node2D
 
 @export var input_key: String = "ui_accept" 
 @export var note_speed: float = 400.0 # How fast the beats fall (pixels per second)
+@export var lane_index: int = 1
 
 @onready var receptor: Sprite2D = $drumpad
 @onready var feedback_label: Label = $Feedback
@@ -9,25 +13,37 @@ extends Node2D
 var active_notes: Array[ColorRect] = []
 
 func _ready() -> void:
+	print("hello")
 	# Hide the feedback text when the game starts
 	feedback_label.modulate.a = 0.0
 	
+	# 1. Listen for SongManager signals instead of using a random timer!
+	SongManager.connect("note_spawned", Callable(self, "_on_song_manager_note_spawned"))
+	
+	# 2. Start the test song
+	SongManager.load_and_play_song("res://songs/test_song")
+	
 	# For testing: Spawn a drum beat every 1 second!
 	# In a real game, you would spawn these synced to your Conductor BPM.
-	var timer = Timer.new()
-	timer.wait_time = 1.0
-	timer.autostart = true
-	timer.timeout.connect(spawn_beat)
-	add_child(timer)
+	#var timer = Timer.new()
+	#timer.wait_time = 1.0
+	#timer.autostart = true
+	#timer.timeout.connect(spawn_beat)
+	#add_child(timer)
 
 # ---------------------------------------------------------
 # SPAWN & MOVE BEATS
 # ---------------------------------------------------------
+func _on_song_manager_note_spawned(pad_index: int) -> void:
+	# Only spawn a note if the JSON instruction matches this specific lane's index
+	if pad_index == lane_index:
+		spawn_beat()
+
 func spawn_beat() -> void:
 	# Create a visual block for the falling drum beat
 	var note = ColorRect.new()
 	note.size = Vector2(50, 50)
-	note.color = Color.MAGENTA
+	note.color = Color.BLUE
 	
 	# Center it on the lane, starting off-screen at the top
 	note.position = Vector2(receptor.position.x + 7, receptor.position.y-300) 

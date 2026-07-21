@@ -3,9 +3,10 @@ extends Sprite2D
 # --- DRUM PAD VARIABLES ---
 @export var input_action: String = "upp_left"
 @export var scale_factor: float = 0.1
+@export var lane_index: int 
 
 # --- RHYTHM VARIABLES ---
-@export var note_speed: float = 400.0
+@export var note_speed: float = 200.0
 @export var frame_num: int = 0
 @onready var feedback_label: Label = $Feedback
 #@onready var hit_effect: CPUParticles2D = $HitEffect
@@ -14,29 +15,40 @@ var o_scale: Vector2
 var active_notes: Array[ColorRect] = []
 
 func _ready() -> void:
+	lane_index = int(name.substr(name.length() - 1, 1))
+	
 	frame = frame_num
 	o_scale = scale
 	
 	# Hide feedback text on start
 	feedback_label.modulate.a = 0.0
 	
+	SongManager.connect("note_spawned", Callable(self, "_on_song_manager_note_spawned"))
+
+	SongManager.load_and_play_song("res://songs/test_song")
+	
 	# ---------------------------------------------------------
 	# TEST SPAWNER: Spawns a beat every 1 second.
 	# Replace this with your Conductor/Song logic later!
 	# ---------------------------------------------------------
-	var timer = Timer.new()
-	timer.wait_time = 1.0
-	timer.autostart = true
-	timer.timeout.connect(spawn_beat)
-	add_child(timer)
+	#var timer = Timer.new()
+	#timer.wait_time = 1.0
+	#timer.autostart = true
+	#timer.timeout.connect(spawn_beat)
+	#add_child(timer)
 
 # ---------------------------------------------------------
 # SPAWN & MOVE BEATS
 # ---------------------------------------------------------
+func _on_song_manager_note_spawned(pad_index: int) -> void:
+	# Only spawn a note if the JSON instruction matches this specific lane's index
+	if pad_index == lane_index:
+		spawn_beat()
+
 func spawn_beat() -> void:
 	var note = ColorRect.new()
 	note.size = Vector2(40, 40)
-	note.color = Color.MAGENTA
+	note.color = Color.BLUE
 	
 	# THE MAGIC TRICK: This stops the falling note from bouncing/scaling 
 	# when the Sprite2D drum pad gets hit!
@@ -130,3 +142,8 @@ func show_feedback(text: String, color: Color) -> void:
 		
 	active_tween.tween_property(feedback_label, "modulate:a", 0.0, 0.3)\
 		.set_delay(0.2)
+
+func get_lane_index() -> int:
+	# Gets drum index from last number in the name
+	var last_char = name.substr(name.length() - 1, 1)
+	return int(last_char)

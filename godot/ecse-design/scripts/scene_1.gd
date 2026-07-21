@@ -13,7 +13,10 @@ var zoom_pulse: float = 0.0
 func _ready() -> void:
 	# Connect to your sound node's signal
 	
-	Conductor.play_with_fade(level_music,bpm,fade_time)
+	#Conductor.play_with_fade(level_music,bpm,fade_time)
+	pass
+	
+	
 func _process(_delta: float) -> void:
 	# BACKGROUND: Multiplied by 0.3 (moves/zooms very subtly)
 	background.scale = base_scale + Vector2(zoom_pulse * 0.01, zoom_pulse * 0.01)

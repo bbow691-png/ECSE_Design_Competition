@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ECSE_DESIGN"
-run/main_scene="res://scenes/game_scene/walk_around.tscn"
+run/main_scene="uid://c53027kp8cosb"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -24,6 +24,7 @@ buses/default_bus_layout="uid://btvtfhs1vklab"
 Conductor="*uid://cw7n0rjke4iao"
 PiezoInput="*res://scripts/piezo_input.gd"
 SceneTransition="*uid://buyk2dc75ft87"
+SongManager="*uid://ci00ihubd4opx"
 
 [display]
 

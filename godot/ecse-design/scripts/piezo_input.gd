@@ -1,9 +1,10 @@
 extends Node
 
-# Listens for piezo hit packets forwarded by bridge.py / stream_audio.py
-# ("channel:velocity", e.g. "1:87") and injects them as real input events so
-# drum_pad.gd's existing is_action_pressed(input_action) checks fire exactly
-# as if the matching key had been pressed.
+# Listens for piezo hit packets forwarded by stream_audio.py (the channel
+# number only, e.g. "1" - hit velocity isn't used by the game) and injects
+# them as real input events so drum_pad.gd's existing
+# is_action_pressed(input_action) checks fire exactly as if the matching key
+# had been pressed.
 
 const UDP_PORT := 5005
 
@@ -28,20 +29,16 @@ func _process(_delta: float) -> void:
 		_handle_packet(_socket.get_packet().get_string_from_utf8())
 
 func _handle_packet(text: String) -> void:
-	var parts := text.split(":")
-	if parts.size() != 2:
+	if not text.is_valid_int():
 		return
 
-	var action: String = CHANNEL_TO_ACTION.get(int(parts[0]), "")
+	var action: String = CHANNEL_TO_ACTION.get(int(text), "")
 	if action.is_empty():
 		return
-
-	var strength := clampf(int(parts[1]) / 127.0, 0.0, 1.0)
 
 	var press := InputEventAction.new()
 	press.action = action
 	press.pressed = true
-	press.strength = strength
 	Input.parse_input_event(press)
 
 	var release := InputEventAction.new()

@@ -11,12 +11,12 @@ BAUD = 921600
 SAMPLE_RATE = 22050
 CHUNK_SIZE = 256
 
-# UDP config (piezo hits -> Godot). Matches godot/ecse-design/scripts/bridge.py's contract.
+# UDP config (piezo hits -> Godot). Matches godot/ecse-design/scripts/piezo_input.gd's contract.
 UDP_IP = "127.0.0.1"
 UDP_PORT = 5005
 
-# Match lines like: HIT:1:87
-HIT_PATTERN = re.compile(rb'HIT:(\d+):(\d+)')
+# Match lines like: HIT:1 (channel only - the game doesn't use hit velocity)
+HIT_PATTERN = re.compile(rb'HIT:(\d+)')
 
 # A serial port can only be opened by one process at a time, and the ESP32
 # link needs to carry audio out and hit events back at the same time, so both
@@ -41,9 +41,9 @@ def read_hits(ser, sock, stop_event):
             buf = bytearray(rest)
             match = HIT_PATTERN.search(line)
             if match:
-                channel, velocity = match.group(1).decode(), match.group(2).decode()
-                sock.sendto(f"{channel}:{velocity}".encode(), (UDP_IP, UDP_PORT))
-                print(f"Hit: Piezo {channel} vel={velocity}")
+                channel = match.group(1).decode()
+                sock.sendto(channel.encode(), (UDP_IP, UDP_PORT))
+                print(f"Hit: Piezo {channel}")
 
 
 def stream_loopback(ser):

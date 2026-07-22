@@ -27,28 +27,31 @@
 #define AUDIO_CHUNK    512      //Max bytes pulled from Serial per loop pass
 
 //------------------------------Piezo Config-----------------------------------//
-#define STRIKE_THRESHOLD  500   //ADC value to trigger a hit (0-4095)
-#define DEBOUNCE_MS       50    //Minimum time between strikes (ms)
-#define HOLD_MS           20    //How long to hold triggered state (ms)
+#define STRIKE_THRESHOLD    500  //ADC value to trigger a hit (0-4095)
+#define DEBOUNCE_MS         50   //Per-channel: minimum time between strikes on the same pad (ms)
+#define HOLD_MS             20   //Per-channel: how long to hold triggered state (ms)
+//A real strike's vibration reaches neighbouring piezos within ~1ms and can
+//cross their threshold too. Once any channel fires, ignore ALL channels for
+//this long so one physical hit can't be reported as hits on multiple pads.
+#define CROSSTALK_MASK_MS   15
 
 //Struct to track state of each piezo channel
 struct PiezoChannel {
     uint8_t pin;                //GPIO pin number
-    const char* name;           //Human readable name for serial debug
     unsigned long last_strike;  //Timestamp of last strike (ms)
     bool triggered;             //Currently in triggered state
-    int peak;                   //Peak ADC value since last strike
 };
 
 //Initialise all four channels
 PiezoChannel channels[] = {
-    { PIEZO_1, "Piezo 1", 0, false, 0 },
-    { PIEZO_2, "Piezo 2", 0, false, 0 },
-    { PIEZO_3, "Piezo 3", 0, false, 0 },
-    { PIEZO_4, "Piezo 4", 0, false, 0 }
+    { PIEZO_1, 0, false },
+    { PIEZO_2, 0, false },
+    { PIEZO_3, 0, false },
+    { PIEZO_4, 0, false }
 };
 
 const int NUM_CHANNELS = 4;
+static unsigned long last_hit_ms = 0;  //Across all channels, for the crosstalk mask
 
 //------------------------------I2S Configuration---------------------------------//
 void i2s_init() {
@@ -78,48 +81,51 @@ void i2s_init() {
     i2s_zero_dma_buffer(I2S_PORT);
 }
 
-//------------------------------Piezo Strike Detection-------------------------//
-void check_piezos() {
-    unsigned long now = millis();
+//------------------------------Piezo Strike Detection (Core 0 task)-----------//
+//Runs as its own FreeRTOS task pinned to Core 0, entirely separate from the
+//Core 1 loop() that pumps audio - so piezo polling and HIT reporting can
+//never stall audio playback, and vice versa. WiFi is gone (audio moved to
+//serial), so Core 0 has nothing else meaningful running on it.
+void piezo_task(void* pvParameters) {
+    for (;;) {
+        unsigned long now = millis();
+        bool masked = (now - last_hit_ms) < CROSSTALK_MASK_MS;
 
-    for (int i = 0; i < NUM_CHANNELS; i++) {
-        PiezoChannel& ch = channels[i];
+        for (int i = 0; i < NUM_CHANNELS; i++) {
+            PiezoChannel& ch = channels[i];
 
-        //Read ADC value (0-4095 for 12-bit)
-        int raw = analogRead(ch.pin);
+            //Read ADC value (0-4095 for 12-bit)
+            int raw = analogRead(ch.pin);
 
-        //Track peak value within the hold window
-        if (raw > ch.peak) ch.peak = raw;
+            //Detect new strike: above threshold, this channel isn't already
+            //mid-strike, its own debounce has elapsed, and no other channel
+            //has claimed this hit already (crosstalk mask).
+            if (!masked && raw > STRIKE_THRESHOLD && !ch.triggered &&
+                (now - ch.last_strike) > DEBOUNCE_MS) {
 
-        //Detect new strike above threshold with debounce
-        if (raw > STRIKE_THRESHOLD && !ch.triggered &&
-            (now - ch.last_strike) > DEBOUNCE_MS) {
+                ch.triggered = true;
+                ch.last_strike = now;
+                last_hit_ms = now;
+                masked = true;  //claim this hit for the rest of this pass too
 
-            ch.triggered = true;
-            ch.last_strike = now;
+                //Hit event over serial to the PC bridge. Format: HIT:channel
+                Serial.print("HIT:");
+                Serial.println(i + 1);
+            }
 
-            //Map peak ADC to MIDI-style velocity (1-127)
-            int velocity = map(ch.peak, STRIKE_THRESHOLD, 4095, 1, 127);
-            velocity = constrain(velocity, 1, 127);
-
-            //Send hit event over serial to Python bridge
-            //Format: HIT:channel:velocity e.g. HIT:1:87
-            Serial.printf("HIT:%d:%d\n", i + 1, velocity);
-
-            ch.peak = 0;
+            //Reset triggered state after hold period
+            if (ch.triggered && (now - ch.last_strike) > HOLD_MS) {
+                ch.triggered = false;
+            }
         }
 
-        //Reset triggered state after hold period
-        if (ch.triggered && (now - ch.last_strike) > HOLD_MS) {
-            ch.triggered = false;
-            ch.peak = 0;
-        }
+        vTaskDelay(1);  //~1kHz sampling per channel; yields so Core 0's idle task/watchdog stays happy
     }
 }
 
 //------------------------------Serial Audio Ingestion--------------------------//
 //Pulls whatever bytes are already sitting in the RX buffer without blocking,
-//so a slow/empty audio link never stalls piezo polling. Only whole 16-bit
+//so loop() stays responsive even when the link is idle. Only whole 16-bit
 //stereo frames (4 bytes: L16+R16) are handed to I2S so a read landing
 //mid-frame doesn't leave the L/R channels permanently swapped.
 static uint8_t audio_buf[AUDIO_CHUNK];
@@ -162,12 +168,15 @@ void setup() {
 
     i2s_init();
 
+    //Pin piezo polling to Core 0 so it runs fully in parallel with the audio
+    //pump on Core 1 (loop()) instead of competing with it for loop time.
+    xTaskCreatePinnedToCore(piezo_task, "piezo_task", 4096, NULL, 1, NULL, 0);
+
     Serial.println("Ready");
 }
 
 void loop() {
     pump_audio();
-    check_piezos();
 }
 
 //-----------------------------------------------------------------------------//

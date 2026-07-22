@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://cwh63icw3dh4k" path="res://scenes/menu/S.tscn" id="1_klgdb"]
 [ext_resource type="Script" uid="uid://yuht10q6bf3w" path="res://scenes/menu/menu.gd" id="1_mcvr8"]
 [ext_resource type="Texture2D" uid="uid://b34fiwt65wmpl" path="res://assets/Spritesheets/Bamboo_bg.png" id="2_e0arn"]
+[ext_resource type="AudioStream" uid="uid://b0hgisfov3yh7" path="res://assets/music/Funkin' Sound Team - Friday Night Funkin' OST Expansion Vol.1 - 01 Results - Excellent.mp3" id="2_y1o0p"]
 [ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="3_037ec"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ix81m"]
@@ -19,6 +20,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mcvr8")
+menu_music = ExtResource("2_y1o0p")
 
 [node name="Background" type="TextureRect" parent="." unique_id=1052050739]
 layout_mode = 1

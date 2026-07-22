@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cd2qonc5otexv" path="res://scripts/scene_1.gd" id="1_d7a6c"]
 [ext_resource type="Texture2D" uid="uid://l0k204jpr7rc" path="res://assets/Spritesheets/Swamp_bg.png" id="3_52ejm"]
 [ext_resource type="AudioStream" uid="uid://xp0wljlggmi2" path="res://assets/music/CastleCrashersMap.mp3" id="3_p837x"]
+[ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="4_3jmp3"]
 [ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
 
@@ -33,13 +34,14 @@ follow_viewport_enabled = true
 layer = 3
 follow_viewport_enabled = true
 
+[node name="Player" parent="Foreground" unique_id=1603383723 instance=ExtResource("4_3jmp3")]
+z_index = 14
+position = Vector2(1390, 764)
+scale = Vector2(0.2, 0.2)
+
 [node name="GameUI" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
 z_index = 15
-offset_left = 633.0
-offset_top = -280.0
-offset_right = 633.0
-offset_bottom = -280.0
 
 [node name="FrogChar" parent="Foreground" unique_id=128235790 instance=ExtResource("5_52ejm")]
-position = Vector2(1509, 742)
-scale = Vector2(0.30161124, 0.297705)
+position = Vector2(388, 734)
+scale = Vector2(-0.302, 0.298)

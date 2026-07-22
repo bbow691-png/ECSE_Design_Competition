@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://diwm7fafw7uxa"]
 
 [ext_resource type="Texture2D" uid="uid://bucngrjxqtngi" path="res://assets/Spritesheets/WorldMap.png" id="1_5m4q6"]
+[ext_resource type="Script" uid="uid://cd8gu8tj54jc4" path="res://scenes/map_scene.gd" id="1_vlip3"]
 [ext_resource type="Script" uid="uid://bb3jmh0hkj0ex" path="res://path_follow_2d.gd" id="2_vlip3"]
-[ext_resource type="Texture2D" uid="uid://tjxbjd4td5w8" path="res://assets/images/Raccoon.png" id="3_vsh3c"]
+[ext_resource type="AudioStream" uid="uid://b0hgisfov3yh7" path="res://assets/music/Funkin' Sound Team - Friday Night Funkin' OST Expansion Vol.1 - 01 Results - Excellent.mp3" id="2_vsh3c"]
+[ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="5_vsh3c"]
 
 [sub_resource type="Curve2D" id="Curve2D_eobcy"]
 _data = {
@@ -17,6 +19,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_vlip3")
+map_music = ExtResource("2_vsh3c")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=1772951573]
 layer = -1
@@ -39,7 +43,4 @@ rotates = false
 script = ExtResource("2_vlip3")
 squash_amount = 0.05
 
-[node name="Sprite2D" type="Sprite2D" parent="Path2D/PathFollow2D" unique_id=62478321]
-z_index = 20
-scale = Vector2(0.1, 0.1)
-texture = ExtResource("3_vsh3c")
+[node name="Player" parent="Path2D/PathFollow2D" unique_id=1603383723 instance=ExtResource("5_vsh3c")]

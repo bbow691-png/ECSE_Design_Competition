@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dtfhytn7tlijr"]
 
 [ext_resource type="Texture2D" uid="uid://chj4xpebnsy0l" path="res://assets/Spritesheets/frog_idle_spritesheet.png" id="1_mwwvo"]
+[ext_resource type="Script" uid="uid://plc61vquieul" path="res://scenes/game_scene/frog_char.gd" id="2_1gdt1"]
 
 [sub_resource type="Animation" id="Animation_mwwvo"]
 length = 0.001
@@ -43,6 +44,7 @@ _data = {
 texture = ExtResource("1_mwwvo")
 hframes = 4
 frame = 1
+script = ExtResource("2_1gdt1")
 
 [node name="AnimationPlayer2" type="AnimationPlayer" parent="." unique_id=1394151842]
 libraries/ = SubResource("AnimationLibrary_mwwvo")

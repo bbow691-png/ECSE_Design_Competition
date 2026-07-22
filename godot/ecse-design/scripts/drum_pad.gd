@@ -4,7 +4,7 @@ extends TextureRect  # Or TextureRect, depending on your UI node type
 @export var input_action: String = "upp_left"
 @export var sound_name:String = "highhat"
 @onready var sound: AudioStreamWAV = load("res://assets/music/"+sound_name+".wav")
-@onready var hit_effect: CPUParticles2D = $HitEffect
+#@onready var hit_effect: CPUParticles2D = $HitEffect
 var o_scale:Vector2 = scale
 @export var scale_factor:float = 0.1
 func _unhandled_input(event: InputEvent) -> void:
@@ -15,7 +15,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		#$AudioStreamPlayer.play()
 func trigger_hit_effect() -> void:
 	# Visual flare: Restart particle burst
-	hit_effect.restart() 
+	#hit_effect.restart() 
 	
 	
 	# Visual flare: Quick juice effect using a Tween (shrinks/grows the pad slightly)

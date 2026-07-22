@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://diwm7fafw7uxa"]
+
+[ext_resource type="Texture2D" uid="uid://bucngrjxqtngi" path="res://assets/Spritesheets/WorldMap.png" id="1_5m4q6"]
+[ext_resource type="Script" uid="uid://bb3jmh0hkj0ex" path="res://path_follow_2d.gd" id="2_vlip3"]
+[ext_resource type="Texture2D" uid="uid://tjxbjd4td5w8" path="res://assets/images/Raccoon.png" id="3_vsh3c"]
+
+[sub_resource type="Curve2D" id="Curve2D_eobcy"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 535, 727, 0, 0, 0, 0, 552, 493, 0, 0, 0, 0, 861, 492, 0, 0, 0, 0, 867, 580, 0, 0, 0, 0, 863, 635, 0, 0, 0, 0, 1290, 633, 0, 0, 0, 0, 1285, 549, 0, 0, 0, 0, 1584, 542)
+}
+point_count = 8
+
+[node name="map_scene" type="Control" unique_id=423115192]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=1772951573]
+layer = -1
+
+[node name="TextureRect" type="TextureRect" parent="Background" unique_id=1575556818]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_5m4q6")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=336107202]
+position = Vector2(960, 540)
+
+[node name="Path2D" type="Path2D" parent="." unique_id=1259892987]
+curve = SubResource("Curve2D_eobcy")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D" unique_id=2104064849]
+position = Vector2(535, 727)
+rotation = -1.4982742
+rotates = false
+script = ExtResource("2_vlip3")
+squash_amount = 0.05
+
+[node name="Sprite2D" type="Sprite2D" parent="Path2D/PathFollow2D" unique_id=62478321]
+z_index = 20
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_vsh3c")

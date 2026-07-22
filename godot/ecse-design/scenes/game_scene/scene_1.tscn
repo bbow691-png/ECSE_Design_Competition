@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://chkj2w7ppx8pc"]
 
 [ext_resource type="Script" uid="uid://cd2qonc5otexv" path="res://scripts/scene_1.gd" id="1_d7a6c"]
+[ext_resource type="Texture2D" uid="uid://l0k204jpr7rc" path="res://assets/Spritesheets/Swamp_bg.png" id="3_52ejm"]
 [ext_resource type="AudioStream" uid="uid://xp0wljlggmi2" path="res://assets/music/CastleCrashersMap.mp3" id="3_p837x"]
-[ext_resource type="Texture2D" uid="uid://b2esn2h6o5oi2" path="res://assets/images/grass.jpg" id="4_r02jg"]
 [ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
 
@@ -13,15 +13,17 @@ fade_time = 5.0
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1418258072]
 unique_name_in_owner = true
+position = Vector2(958, 543)
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=1854626790]
-follow_viewport_enabled = true
 
-[node name="Sprite2D" type="Sprite2D" parent="Background" unique_id=2101240512]
-z_index = -1
-position = Vector2(-6.000061, -12)
-scale = Vector2(1.870915, 1.385621)
-texture = ExtResource("4_r02jg")
+[node name="Background" type="TextureRect" parent="Background" unique_id=1745690911]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_52ejm")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=304241399]
 layer = 5
@@ -33,10 +35,11 @@ follow_viewport_enabled = true
 
 [node name="GameUI" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
 z_index = 15
-offset_left = -947.0
-offset_top = -1080.0
-offset_right = -947.0
-offset_bottom = -1080.0
+offset_left = 633.0
+offset_top = -280.0
+offset_right = 633.0
+offset_bottom = -280.0
 
 [node name="FrogChar" parent="Foreground" unique_id=128235790 instance=ExtResource("5_52ejm")]
-scale = Vector2(0.1, 0.1)
+position = Vector2(1509, 742)
+scale = Vector2(0.30161124, 0.297705)

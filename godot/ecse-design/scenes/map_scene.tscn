@@ -38,9 +38,9 @@ curve = SubResource("Curve2D_eobcy")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D" unique_id=2104064849]
 position = Vector2(535, 727)
-rotation = -1.4982742
 rotates = false
 script = ExtResource("2_vlip3")
+speed = 450.0
 squash_amount = 0.05
 
 [node name="Player" parent="Path2D/PathFollow2D" unique_id=1603383723 instance=ExtResource("5_vsh3c")]

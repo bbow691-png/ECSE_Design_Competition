@@ -1,7 +1,7 @@
 extends Control
 
 # Paths to the scenes we want to load when buttons are clicked
-const GAMEPLAY_SCENE: String = "res://scenes/game_scene/scene_1.tscn"
+const GAMEPLAY_SCENE: String = "res://scenes/map_scene.tscn"
 const OPTIONS_SCENE: String = "res://scenes/map_scene.tscn"
 
 @onready var story_btn: Button = $MenuContainer/Play

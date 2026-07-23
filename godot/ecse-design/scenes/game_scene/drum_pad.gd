@@ -10,9 +10,10 @@ extends Sprite2D
 @export var frame_num: int = 0
 @onready var feedback_label: Label = $Feedback
 #@onready var hit_effect: CPUParticles2D = $HitEffect
+@onready var beat_placeholder: Sprite2D = $beat
 
 var o_scale: Vector2
-var active_notes: Array[ColorRect] = []
+var active_notes: Array[Sprite2D] = []
 
 func _ready() -> void:
 	lane_index = int(name.substr(name.length() - 1, 1))
@@ -23,9 +24,13 @@ func _ready() -> void:
 	# Hide feedback text on start
 	feedback_label.modulate.a = 0.0
 	
-	SongManager.connect("note_spawned", Callable(self, "_on_song_manager_note_spawned"))
+	# beat_placeholder is just the template — keep it hidden so only the
+	# spawned clones are visible falling down the lane.
+	beat_placeholder.visible = false
+	
+	Conductor.connect("note_spawned", Callable(self, "_on_song_manager_note_spawned"))
 
-	SongManager.load_and_play_song("res://songs/test_song")
+	Conductor.load_and_play_song("res://songs/test_song")
 	
 	# ---------------------------------------------------------
 	# TEST SPAWNER: Spawns a beat every 1 second.
@@ -46,9 +51,8 @@ func _on_song_manager_note_spawned(pad_index: int) -> void:
 		spawn_beat()
 
 func spawn_beat() -> void:
-	var note = ColorRect.new()
-	note.size = Vector2(40, 40)
-	note.color = Color.BLUE
+	var note = beat_placeholder.duplicate()
+	note.visible = true
 	
 	# THE MAGIC TRICK: This stops the falling note from bouncing/scaling 
 	# when the Sprite2D drum pad gets hit!
@@ -56,8 +60,8 @@ func spawn_beat() -> void:
 	
 	# Center it on the pad, but start it 500 pixels higher up the screen
 	note.global_position = global_position + Vector2(-20, -500) 
-	note.set_as_top_level(true)
 	note.z_index = 100 # Forces note in front of the drum pad
+	note.frame = frame
 	
 	add_child(note)
 	active_notes.append(note)
@@ -114,7 +118,7 @@ func evaluate_hit() -> void:
 		show_feedback("NEAR", Color.YELLOW)
 		destroy_note(target_note)
 
-func destroy_note(note: ColorRect) -> void:
+func destroy_note(note) -> void:
 	active_notes.erase(note)
 	note.queue_free()
 

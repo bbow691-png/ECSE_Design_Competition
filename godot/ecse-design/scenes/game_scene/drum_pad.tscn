@@ -24,3 +24,9 @@ position = Vector2(-688.5, -310.5)
 scale = Vector2(0.3, 0.3)
 volume_db = 10.0
 max_polyphony = 4
+
+[node name="beat" type="Sprite2D" parent="." unique_id=280891470]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_vva8c")
+hframes = 4

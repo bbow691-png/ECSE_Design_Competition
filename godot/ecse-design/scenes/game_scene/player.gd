@@ -35,7 +35,6 @@ func play_hit_sequence() -> void:
 		
 
 func _on_combo_timeout() -> void:
-	print("sdcs")
 	# 4. The player stopped pressing buttons. Time to go back to idle.
 	anim_player.clear_queue()
 	anim_player.play("transition_2") 

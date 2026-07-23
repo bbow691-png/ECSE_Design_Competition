@@ -10,7 +10,7 @@ hframes = 4
 script = ExtResource("1_lncmm")
 
 [node name="Feedback" type="Label" parent="." unique_id=1013427100]
-z_index = 5
+z_index = 105
 offset_left = -156.0
 offset_top = -308.0
 offset_right = 147.0

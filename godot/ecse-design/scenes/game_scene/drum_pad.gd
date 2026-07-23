@@ -9,8 +9,8 @@ extends Sprite2D
 @export var note_speed: float = 200.0
 @export var frame_num: int = 0
 @onready var feedback_label: Label = $Feedback
-#@onready var hit_effect: CPUParticles2D = $HitEffect
 @onready var beat_placeholder: Sprite2D = $beat
+#@onready var hit_effect: CPUParticles2D = $HitEffect
 
 var o_scale: Vector2
 var active_notes: Array[Sprite2D] = []
@@ -21,8 +21,9 @@ func _ready() -> void:
 	frame = frame_num
 	o_scale = scale
 	
-	# Hide feedback text on start
-	feedback_label.modulate.a = 0.0
+	# feedback_label is just the template — keep it hidden so only the
+	# spawned clones are visible per hit.
+	feedback_label.visible = false
 	
 	# beat_placeholder is just the template — keep it hidden so only the
 	# spawned clones are visible falling down the lane.
@@ -61,7 +62,7 @@ func spawn_beat() -> void:
 	# Center it on the pad, but start it 500 pixels higher up the screen
 	note.global_position = global_position + Vector2(-20, -500) 
 	note.z_index = 100 # Forces note in front of the drum pad
-	note.frame = frame
+	note.frame_coords.x = frame_coords.x
 	
 	add_child(note)
 	active_notes.append(note)
@@ -126,26 +127,33 @@ func destroy_note(note) -> void:
 # FEEDBACK ANIMATION
 # ---------------------------------------------------------
 func show_feedback(text: String, color: Color) -> void:
-	var active_tween = create_tween().set_parallel(true)
-	
-	feedback_label.text = text
-	feedback_label.modulate = color
-	feedback_label.modulate.a = 1.0 
+	var label: Label = feedback_label.duplicate()
+	label.visible = true
+	label.text = text
+	label.modulate = color
+	label.modulate.a = 1.0
 	
 	# Start slightly above the pad
 	var base_y = -60 
-	feedback_label.position.y = base_y
-	feedback_label.scale = Vector2(1.5, 1.5)
+	label.position.y = base_y
+	label.scale = Vector2(1.5, 1.5)
+	
+	add_child(label)
+	
+	var active_tween = create_tween().set_parallel(true)
 	
 	# Pop in, float up, and fade out
-	active_tween.tween_property(feedback_label, "scale", Vector2.ONE, 0.2)\
+	active_tween.tween_property(label, "scale", Vector2.ONE, 0.2)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		
-	active_tween.tween_property(feedback_label, "position:y", base_y - 40, 0.5)\
+	active_tween.tween_property(label, "position:y", base_y - 40, 0.5)\
 		.set_ease(Tween.EASE_OUT)
 		
-	active_tween.tween_property(feedback_label, "modulate:a", 0.0, 0.3)\
+	active_tween.tween_property(label, "modulate:a", 0.0, 0.3)\
 		.set_delay(0.2)
+	
+	# Clean up the clone once its animation finishes so labels don't pile up
+	active_tween.chain().tween_callback(label.queue_free)
 
 func get_lane_index() -> int:
 	# Gets drum index from last number in the name

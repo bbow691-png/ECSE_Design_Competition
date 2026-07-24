@@ -4,8 +4,13 @@
 [ext_resource type="Texture2D" uid="uid://l0k204jpr7rc" path="res://assets/Spritesheets/Swamp_bg.png" id="3_52ejm"]
 [ext_resource type="AudioStream" uid="uid://xp0wljlggmi2" path="res://assets/music/CastleCrashersMap.mp3" id="3_p837x"]
 [ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="4_3jmp3"]
+[ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="4_dyg8e"]
 [ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c18ma"]
+shader = ExtResource("4_dyg8e")
+shader_parameter/blur_amount = 2.5
 
 [node name="Scene1" type="Node2D" unique_id=1132201814]
 script = ExtResource("1_d7a6c")
@@ -26,6 +31,23 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_52ejm")
 
+[node name="BackBufferCopy" type="BackBufferCopy" parent="Background/Background" unique_id=1484624341]
+position = Vector2(974.49994, 560)
+scale = Vector2(10.155001, 5.71)
+copy_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Background/Background/BackBufferCopy" unique_id=1535292703]
+material = SubResource("ShaderMaterial_c18ma")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="UI" type="CanvasLayer" parent="." unique_id=304241399]
 layer = 5
 follow_viewport_enabled = true
@@ -39,8 +61,21 @@ z_index = 14
 position = Vector2(1390, 764)
 scale = Vector2(0.2, 0.2)
 
-[node name="GameUI" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
+[node name="Boss" parent="Foreground" unique_id=689069462 instance=ExtResource("7_ybqas")]
 z_index = 15
+offset_left = 129.0
+offset_top = 789.0
+offset_right = -1191.0
+offset_bottom = 9.0
+
+[node name="Player2" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
+z_index = 15
+offset_left = 1152.0
+offset_top = 761.0
+offset_right = -168.0
+offset_bottom = -19.0
+input_enabled = true
+lane_num = 1
 
 [node name="FrogChar" parent="Foreground" unique_id=128235790 instance=ExtResource("5_52ejm")]
 position = Vector2(481.00003, 666.00006)

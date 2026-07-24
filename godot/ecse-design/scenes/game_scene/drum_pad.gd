@@ -1,4 +1,11 @@
 extends Sprite2D
+# NOTE: this assumes Conductor.note_spawned now emits a third argument —
+# the note's boss flag (0 or 1) from the beatmap JSON — alongside
+# pad_index and hit_time:
+#   signal note_spawned(pad_index: int, hit_time: float, boss: int)
+# If Conductor still only emits (pad_index, hit_time), update its emit
+# call to include the note's "boss" value or the connection below
+# will error with an argument-count mismatch.
 
 # --- DRUM PAD VARIABLES ---
 @export var input_action: String = "upp_left"
@@ -11,7 +18,9 @@ extends Sprite2D
 @export var frame_num: int = 0
 @onready var feedback_label: Label = $Feedback
 @onready var beat_placeholder: Sprite2D = $beat
-#@onready var hit_effect: CPUParticles2D = $HitEffect
+var input_enabled = false
+# 0 or 1, for boss and player
+var lane_num = 0
 
 var o_scale: Vector2
 var active_notes: Array[Sprite2D] = []
@@ -38,10 +47,12 @@ func _ready() -> void:
 # ---------------------------------------------------------
 # SPAWN & MOVE BEATS
 # ---------------------------------------------------------
-func _on_song_manager_note_spawned(pad_index: int, hit_time: float) -> void:
-	# Only spawn a note if the JSON instruction matches this specific lane's index
-	print("Pad ", lane_index, " got signal for pad ", pad_index)
-	if pad_index == lane_index:
+func _on_song_manager_note_spawned(pad_index: int, hit_time: float, boss: int) -> void:
+	# Only spawn a note if the JSON instruction matches this specific lane's
+	# index AND this pad's boss/player lane matches the note's section —
+	# boss-section notes only spawn on boss-lane pads (lane_num == 1) and
+	# player-section notes only spawn on player-lane pads (lane_num == 0).
+	if pad_index == lane_index and boss == lane_num:
 		spawn_beat(hit_time)
 
 func spawn_beat(hit_time: float) -> void:
@@ -53,7 +64,7 @@ func spawn_beat(hit_time: float) -> void:
 	note.set_as_top_level(true)
 
 	var start_pos: Vector2 = global_position + Vector2(-0, -spawn_distance)
-	var target_pos: Vector2 = global_position + Vector2(-0, -18)
+	var target_pos: Vector2 = global_position + Vector2(-0, -25)
 
 	note.global_position = start_pos
 	note.z_index = 100 # Forces note in front of the drum pad
@@ -99,18 +110,14 @@ func _process(_delta: float) -> void:
 # INPUT & HIT DETECTION
 # ---------------------------------------------------------
 func _unhandled_input(event: InputEvent) -> void:
+	if input_enabled == false:
+		return
 	# Check if THIS specific pad's action was pressed
 	if event.is_action_pressed(input_action):
 		trigger_hit_effect()
 		evaluate_hit()
 
-		#$AudioStreamPlayer.stream = sound
-		#$AudioStreamPlayer.play()
-
 func trigger_hit_effect() -> void:
-	# Visual flare: Restart particle burst
-	# hit_effect.restart()
-
 	# Visual flare: Quick juice effect using a Tween
 	var tween = create_tween()
 	tween.tween_property(self, "scale", o_scale + Vector2(scale_factor, scale_factor), 0.05)
@@ -175,8 +182,3 @@ func show_feedback(text: String, color: Color) -> void:
 
 	# Clean up the clone once its animation finishes so labels don't pile up
 	active_tween.chain().tween_callback(label.queue_free)
-
-func get_lane_index() -> int:
-	# Gets drum index from last number in the name
-	var last_char = name.substr(name.length() - 1, 1)
-	return int(last_char)

@@ -11,8 +11,8 @@ project's rhythm-game JSON format:
     "pads": 4,
     "note_count": 153,
     "notes": [
-        {"time": 0.07, "pad": 2},
-        {"time": 1.155, "pad": 1},
+        {"time": 0.07, "pad": 2, "boss": 0},
+        {"time": 1.155, "pad": 1, "boss": 0},
         ...
     ]
 }
@@ -27,6 +27,16 @@ Sliders and spinners are held notes in osu, not discrete taps. By
 default only their START is used as a hit. Use --slider-ends to also
 add a note at the end of each slider, and --spinners to add a note at
 the start of each spinner.
+
+Every note is also tagged with a "boss" field (0 or 1) marking whether
+it falls in a "boss" section or a "player" section of the song. The
+song's timeline is divided into repeating cycles made of a boss chunk
+followed by a player chunk. The length of each chunk is measured in
+beats (via the map's BPM), controlled by --boss-section-beats. The
+ratio between the boss chunk and the player chunk is 1:3 by default,
+except for "easy" difficulties (difficulty name contains "easy",
+case-insensitive), which use a 1:1 ratio instead. Use --boss-ratio to
+override the ratio explicitly for any difficulty.
 
 Requirements: none beyond the Python standard library.
 
@@ -43,6 +53,9 @@ Usage:
     # Also stage a ready-to-drop-in song folder for the Godot project
     # (writes beatmap.json + song1.mp3 into the given folder)
     python osu_to_beatmap.py map.osz --difficulty Insane --song-folder songs/gravity_falls
+
+    # Tweak the boss/player section sizing
+    python osu_to_beatmap.py map.osz --difficulty Insane --boss-section-beats 16 --boss-ratio 1:4
 """
 
 import argparse
@@ -182,6 +195,55 @@ def estimate_slider_duration_ms(params, timing_point_lines, hit_time_ms, slider_
     return duration_per_slide * repeat_count
 
 
+def parse_ratio(ratio_str):
+    """Parse a 'A:B' ratio string into a (float, float) tuple."""
+    match = re.match(r"^\s*(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\s*$", ratio_str)
+    if not match:
+        raise argparse.ArgumentTypeError(
+            f"Invalid ratio '{ratio_str}', expected format like '1:3'"
+        )
+    a, b = float(match.group(1)), float(match.group(2))
+    if a <= 0 or b <= 0:
+        raise argparse.ArgumentTypeError("Ratio parts must be positive")
+    return (a, b)
+
+
+def assign_boss_sections(notes, bpm, difficulty_name, section_beats, ratio_override=None):
+    """
+    Tags each note in-place with a "boss" field (0 or 1).
+
+    The timeline is divided into repeating cycles of
+    [boss chunk][player chunk]. Chunk lengths are `section_beats` beats
+    each, scaled by the boss:player ratio. Default ratio is 1:3, except
+    "easy" difficulties (name contains "easy", case-insensitive) which
+    use 1:1. `ratio_override`, if given, takes precedence over both.
+    """
+    if bpm <= 0:
+        # No usable tempo — can't derive section lengths in beats, so
+        # everything falls in the player section.
+        for note in notes:
+            note["boss"] = 0
+        return notes
+
+    if ratio_override is not None:
+        boss_ratio, player_ratio = ratio_override
+    elif "easy" in difficulty_name.lower():
+        boss_ratio, player_ratio = (1.0, 1.0)
+    else:
+        boss_ratio, player_ratio = (1.0, 3.0)
+
+    beat_length_sec = 60.0 / bpm
+    boss_len = section_beats * beat_length_sec * boss_ratio
+    player_len = section_beats * beat_length_sec * player_ratio
+    cycle_len = boss_len + player_len
+
+    for note in notes:
+        position_in_cycle = note["time"] % cycle_len
+        note["boss"] = 1 if position_in_cycle < boss_len else 0
+
+    return notes
+
+
 def convert_hit_objects(sections, pads, include_slider_ends, include_spinners):
     hit_object_lines = sections.get("HitObjects", [])
     timing_point_lines = sections.get("TimingPoints", [])
@@ -231,7 +293,8 @@ def convert_hit_objects(sections, pads, include_slider_ends, include_spinners):
     return notes
 
 
-def convert_osu_file(osu_path, pads, include_slider_ends, include_spinners):
+def convert_osu_file(osu_path, pads, include_slider_ends, include_spinners,
+                      boss_section_beats, boss_ratio_override=None):
     sections = parse_osu_sections(osu_path)
     general = parse_key_values(sections.get("General", []))
     meta = parse_key_values(sections.get("Metadata", []))
@@ -242,6 +305,8 @@ def convert_osu_file(osu_path, pads, include_slider_ends, include_spinners):
     title = meta.get("Title", os.path.splitext(os.path.basename(osu_path))[0])
     version = meta.get("Version", "")
     audio_filename = general.get("AudioFilename", "")
+
+    assign_boss_sections(notes, bpm, version, boss_section_beats, boss_ratio_override)
 
     result = {
         "source_file": os.path.basename(osu_path),
@@ -290,6 +355,20 @@ def main():
         "--spinners",
         action="store_true",
         help="Also emit a note at the start of each spinner",
+    )
+    parser.add_argument(
+        "--boss-section-beats",
+        type=float,
+        default=8.0,
+        help="Length, in beats, of one boss/player chunk before the "
+             "boss:player ratio is applied (default: 8)",
+    )
+    parser.add_argument(
+        "--boss-ratio",
+        type=parse_ratio,
+        default=None,
+        help="Override the boss:player section-length ratio, e.g. '1:3'. "
+             "If not set, uses 1:3 normally and 1:1 for 'easy' difficulties.",
     )
     parser.add_argument(
         "--song-folder",
@@ -363,7 +442,8 @@ def main():
 
         print(f"Converting difficulty: {get_difficulty_name(chosen)}")
         result, audio_filename = convert_osu_file(
-            chosen, args.pads, args.slider_ends, args.spinners
+            chosen, args.pads, args.slider_ends, args.spinners,
+            args.boss_section_beats, args.boss_ratio,
         )
 
         difficulty_slug = re.sub(r"[^a-zA-Z0-9]+", "_", get_difficulty_name(chosen)).strip("_").lower()
@@ -372,8 +452,9 @@ def main():
         with open(output_path, "w") as f:
             json.dump(result, f, indent=2)
 
+        boss_count = sum(1 for n in result["notes"] if n["boss"] == 1)
         print(f"Tempo: {result['tempo_bpm']} BPM")
-        print(f"Notes: {result['note_count']}")
+        print(f"Notes: {result['note_count']} ({boss_count} boss / {result['note_count'] - boss_count} player)")
         print(f"Wrote '{output_path}'")
 
         if args.song_folder:

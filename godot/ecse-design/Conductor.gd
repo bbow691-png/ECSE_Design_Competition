@@ -22,7 +22,9 @@ signal beat_hit(beat: int)
 signal step_hit(step: int)
 # Now carries the JSON hit_time along with the lane, so pads know
 # exactly when their note is due instead of just which lane to use.
-signal note_spawned(lane_index: int, hit_time: float)
+# Also carries the note's "boss" flag (0 or 1) from the beatmap JSON so
+# pads can tell boss-section notes apart from player-section notes.
+signal note_spawned(lane_index: int, hit_time: float, boss: int)
 
 # --- Dynamic Audio Players (crossfade system) ---
 var active_player: AudioStreamPlayer
@@ -176,7 +178,10 @@ func _process_note_spawning() -> void:
 
 		# Spawn early so it has time to fall down the screen to the hit line
 		if song_position >= (target_time - spawn_lead_time):
-			note_spawned.emit(note["pad"], target_time)
+			# Default to 0 (player section) for beatmaps exported before the
+			# "boss" field existed, so older JSON files don't break.
+			var boss: int = int(note.get("boss", 0))
+			note_spawned.emit(note["pad"], target_time, boss)
 			current_note_index += 1
 		else:
 			break

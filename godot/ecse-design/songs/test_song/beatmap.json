@@ -8,171 +8,213 @@
   "notes": [
 	{
 	  "time": 0.07,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 1.517,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 1
 	},
 	{
 	  "time": 2.965,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 4.412,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 0
 	},
 	{
 	  "time": 5.136,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 5.86,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 6.945,
-	  "pad": 1
+	  "pad": 1,
+	  "boss": 1
 	},
 	{
 	  "time": 7.307,
-	  "pad": 1
+	  "pad": 1,
+	  "boss": 1
 	},
 	{
 	  "time": 8.393,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 8.755,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 10.202,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 10.926,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 11.65,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 1
 	},
 	{
 	  "time": 12.735,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 1
 	},
 	{
 	  "time": 13.097,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 14.545,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 0
 	},
 	{
 	  "time": 15.992,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 0
 	},
 	{
 	  "time": 17.078,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 0
 	},
 	{
 	  "time": 17.44,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 18.164,
-	  "pad": 4
+	  "pad": 4,
+	  "boss": 1
 	},
 	{
 	  "time": 18.887,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 19.611,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 1
 	},
 	{
 	  "time": 20.335,
-	  "pad": 1
+	  "pad": 1,
+	  "boss": 0
 	},
 	{
 	  "time": 20.697,
-	  "pad": 1
+	  "pad": 1,
+	  "boss": 0
 	},
 	{
 	  "time": 21.782,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 0
 	},
 	{
 	  "time": 22.506,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 23.23,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 1
 	},
 	{
 	  "time": 23.954,
-	  "pad": 1
+	  "pad": 1,
+	  "boss": 1
 	},
 	{
 	  "time": 24.677,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 25.401,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 26.487,
-	  "pad": 4
+	  "pad": 4,
+	  "boss": 0
 	},
 	{
 	  "time": 27.934,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 29.02,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 29.382,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 29.744,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 1
 	},
 	{
 	  "time": 30.468,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 1
 	},
 	{
 	  "time": 31.191,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	},
 	{
 	  "time": 31.915,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 32.277,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 0
 	},
 	{
 	  "time": 33.363,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 0
 	},
 	{
 	  "time": 34.81,
-	  "pad": 2
+	  "pad": 2,
+	  "boss": 1
 	},
 	{
 	  "time": 36.258,
-	  "pad": 3
+	  "pad": 3,
+	  "boss": 1
 	}
   ]
 }

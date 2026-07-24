@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://o3bkkvm68vd7" path="res://scenes/game_scene/drum_pad.gd" id="1_lncmm"]
 [ext_resource type="Texture2D" uid="uid://cx5adeew6djbj" path="res://assets/images/The_drums.png" id="1_vva8c"]
+[ext_resource type="Texture2D" uid="uid://clj5vukng1tyu" path="res://assets/images/Arrows.png" id="3_lncmm"]
 
 [node name="drumpad" type="Sprite2D" unique_id=1714577247]
 scale = Vector2(0.5, 0.5)
@@ -28,5 +29,5 @@ max_polyphony = 4
 [node name="beat" type="Sprite2D" parent="." unique_id=280891470]
 visible = false
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("1_vva8c")
+texture = ExtResource("3_lncmm")
 hframes = 4

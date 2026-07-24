@@ -43,5 +43,5 @@ scale = Vector2(0.2, 0.2)
 z_index = 15
 
 [node name="FrogChar" parent="Foreground" unique_id=128235790 instance=ExtResource("5_52ejm")]
-position = Vector2(388, 734)
+position = Vector2(481.00003, 666.00006)
 scale = Vector2(-0.302, 0.298)

@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" uid="uid://tjxbjd4td5w8" path="res://assets/images/Raccoon.png" id="1_raccoon"]
+[ext_resource type="Script" path="res://scripts/placeholder_enemy_reaction.gd" id="2_raccoon"]
+
+[node name="RaccoonChar" type="Sprite2D"]
+texture = ExtResource("1_raccoon")
+script = ExtResource("2_raccoon")

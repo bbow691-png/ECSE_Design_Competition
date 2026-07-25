@@ -25,6 +25,14 @@ signal step_hit(step: int)
 # Also carries the note's "boss" flag (0 or 1) from the beatmap JSON so
 # pads can tell boss-section notes apart from player-section notes.
 signal note_spawned(lane_index: int, hit_time: float, boss: int)
+# Fires once when the currently loaded song's audio stops on its own —
+# i.e. active_player.playing goes true -> false while a song is still
+# considered "in progress" (is_playing). Pausing for game-over uses
+# stream_paused instead of stop(), so that case never flips .playing
+# and can't be confused with a real end-of-song here.
+signal song_finished
+
+var _was_audio_playing: bool = false
 
 # --- Dynamic Audio Players (crossfade system) ---
 var active_player: AudioStreamPlayer
@@ -125,6 +133,7 @@ func play_with_fade(new_stream: AudioStream, new_bpm: float, fade_time: float = 
 func _process(delta: float) -> void:
 	_process_beat_tracking()
 	_process_note_spawning()
+	_process_song_end_detection()
 
 
 func _process_beat_tracking() -> void:
@@ -185,6 +194,22 @@ func _process_note_spawning() -> void:
 			current_note_index += 1
 		else:
 			break
+
+
+func _process_song_end_detection() -> void:
+	var currently_playing: bool = active_player.playing
+	if is_playing and _was_audio_playing and not currently_playing:
+		song_finished.emit()
+	_was_audio_playing = currently_playing
+
+
+# Called by Health.gd when health hits zero — halts note spawning and
+# freezes the audio in place so the failed run doesn't keep playing
+# under the paused tree.
+func pause_song() -> void:
+	is_playing = false
+	if active_player:
+		active_player.stream_paused = true
 
 
 func load_and_play_song(song_folder_path: String, fade_time: float = 1.0) -> void:

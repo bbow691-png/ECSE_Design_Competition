@@ -7,6 +7,8 @@
 [ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="4_dyg8e"]
 [ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
+[ext_resource type="Script" path="res://scenes/game_scene/health_bar.gd" id="8_hlthb"]
+[ext_resource type="PackedScene" path="res://scenes/game_scene/end_screen.tscn" id="9_endscr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_c18ma"]
 shader = ExtResource("4_dyg8e")
@@ -51,6 +53,25 @@ grow_vertical = 2
 [node name="UI" type="CanvasLayer" parent="." unique_id=304241399]
 layer = 5
 follow_viewport_enabled = true
+
+[node name="HealthBar" type="ProgressBar" parent="UI"]
+anchors_preset = 10
+anchor_left = 0.3
+anchor_right = 0.7
+offset_top = 24.0
+offset_bottom = 64.0
+grow_horizontal = 2
+min_value = 0.0
+max_value = 100.0
+value = 50.0
+show_percentage = false
+script = ExtResource("8_hlthb")
+
+[node name="EndScreen" parent="UI" instance=ExtResource("9_endscr")]
+
+[node name="EndScreenDelay" type="Timer" parent="."]
+wait_time = 1.0
+one_shot = true
 
 [node name="Foreground" type="CanvasLayer" parent="." unique_id=998582307]
 layer = 3

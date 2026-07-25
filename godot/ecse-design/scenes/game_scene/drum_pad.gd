@@ -103,6 +103,12 @@ func _process(_delta: float) -> void:
 		# If the note is well past its hit_time and still un-hit, it's a miss.
 		if song_time > hit_time + hit_window:
 			show_feedback("MISS!", Color.RED)
+			# Only the interactive pad row should cost health — the
+			# non-input boss/decoration row also "misses" every note it
+			# never hits, and that's expected, not a player failure.
+			if input_enabled:
+				Health.apply_judgement("MISS!")
+				Score.add_judgement("MISS!")
 			active_notes.remove_at(i)
 			note.queue_free()
 
@@ -137,14 +143,23 @@ func evaluate_hit() -> void:
 	var time_diff: float = abs(song_time - hit_time)
 
 	# HIT WINDOWS (seconds)
+	# evaluate_hit() only ever runs from _unhandled_input, which already
+	# gates on input_enabled, so every judgement here came from the
+	# actual player pad and is safe to feed to Health directly.
 	if time_diff <= hit_window * 0.25:
 		show_feedback("PERFECT!!", Color.CYAN)
+		Health.apply_judgement("PERFECT!!")
+		Score.add_judgement("PERFECT!!")
 		destroy_note(target_note)
 	elif time_diff <= hit_window * 0.6:
 		show_feedback("GOOD", Color.GREEN)
+		Health.apply_judgement("GOOD")
+		Score.add_judgement("GOOD")
 		destroy_note(target_note)
 	elif time_diff <= hit_window:
 		show_feedback("NEAR", Color.YELLOW)
+		Health.apply_judgement("NEAR")
+		Score.add_judgement("NEAR")
 		destroy_note(target_note)
 
 func destroy_note(note) -> void:

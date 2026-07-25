@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/game_scene/end_screen.gd" id="1_endscr"]
+
+[node name="EndScreen" type="Control"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_endscr")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.75)
+
+[node name="Center" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center"]
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Center/VBox"]
+theme_override_font_sizes/font_size = 64
+text = "SONG COMPLETE"
+horizontal_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="Center/VBox"]
+theme_override_font_sizes/font_size = 36
+text = "Score: 0"
+horizontal_alignment = 1
+
+[node name="BestLabel" type="Label" parent="Center/VBox"]
+theme_override_font_sizes/font_size = 28
+text = "Best: 0"
+horizontal_alignment = 1
+
+[node name="NewHighLabel" type="Label" parent="Center/VBox"]
+visible = false
+modulate = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 32
+text = "NEW HIGH SCORE!"
+horizontal_alignment = 1

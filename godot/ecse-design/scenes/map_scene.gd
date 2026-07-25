@@ -1,15 +1,13 @@
 extends Control
 
-@export var map_music: AudioStream
-@export var bpm: int = 120
-@export var fade_time: float = 5.0
+@export var map_music: String
 
 @onready var camera: Camera2D = $Camera2D
 var camera_tween: Tween
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 
-	Conductor.play_with_fade(map_music,bpm,fade_time)
+	Conductor.play_song(map_music)
 
 func _on_conductor_beat_hit(current_beat: int) -> void:
 	# Flash the background every beat!

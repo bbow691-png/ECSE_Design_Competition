@@ -1,11 +1,4 @@
 extends Sprite2D
-# NOTE: this assumes Conductor.note_spawned now emits a third argument —
-# the note's boss flag (0 or 1) from the beatmap JSON — alongside
-# pad_index and hit_time:
-#   signal note_spawned(pad_index: int, hit_time: float, boss: int)
-# If Conductor still only emits (pad_index, hit_time), update its emit
-# call to include the note's "boss" value or the connection below
-# will error with an argument-count mismatch.
 
 # --- DRUM PAD VARIABLES ---
 @export var input_action: String = "upp_left"
@@ -14,65 +7,70 @@ extends Sprite2D
 
 # --- RHYTHM VARIABLES ---
 @export var spawn_distance: float = 500.0   # how far above the pad notes spawn (px)
-@export var hit_window: float = 0.11        # seconds — outer edge of "NEAR" (matches old 110px tier)
-@export var frame_num: int = 0
+@export var target_hit_offset: Vector2 = Vector2.ZERO # Visually align the target center
+
+# Expanded hit windows (in seconds) for better game feel
+@export var perfect_window: float = 0.06    
+@export var good_window: float = 0.10       
+@export var near_window: float = 0.15       
+@export var miss_window: float = 0.40       # Massively expanded to catch early "tip" hits
+@export var input_offset: float = 0.0       # Adjust if audio/visual lag occurs
+
 @onready var feedback_label: Label = $Feedback
 @onready var beat_placeholder: Sprite2D = $beat
-var input_enabled = false
+
+# Make sure this starts true, or inputs will never fire!
+var input_enabled = true
 # 0 or 1, for boss and player
 var lane_num = 0
 
 var o_scale: Vector2
 var active_notes: Array[Sprite2D] = []
 
+@export var PERFECT_SCORE:int = 500
+@export var GOOD_SCORE:int = 250
+@export var NEAR_SCORE:int = 100
+
+
+
+
 func _ready() -> void:
 	lane_index = int(name.substr(name.length() - 1, 1))
-
-	frame = frame_num
 	o_scale = scale
 
-	# feedback_label is just the template — keep it hidden so only the
-	# spawned clones are visible per hit.
 	feedback_label.visible = false
-
-	# beat_placeholder is just the template — keep it hidden so only the
-	# spawned clones are visible falling down the lane.
 	beat_placeholder.visible = false
 
-	# note_spawned now carries the JSON hit time, not just the pad index,
-	# so each note knows exactly when it needs to reach this pad.
 	Conductor.note_spawned.connect(_on_song_manager_note_spawned)
-	Conductor.load_and_play_song("res://songs/test_song/")
+	
+	Conductor.play_song("test_song")
+
+
+# ---------------------------------------------------------
+# SONG END LOGIC
+# ---------------------------------------------------------
+
+
 
 # ---------------------------------------------------------
 # SPAWN & MOVE BEATS
 # ---------------------------------------------------------
 func _on_song_manager_note_spawned(pad_index: int, hit_time: float, boss: int) -> void:
-	# Only spawn a note if the JSON instruction matches this specific lane's
-	# index AND this pad's boss/player lane matches the note's section —
-	# boss-section notes only spawn on boss-lane pads (lane_num == 1) and
-	# player-section notes only spawn on player-lane pads (lane_num == 0).
 	if pad_index == lane_index and boss == lane_num:
 		spawn_beat(hit_time)
 
 func spawn_beat(hit_time: float) -> void:
 	var note = beat_placeholder.duplicate()
 	note.visible = true
-
-	# THE MAGIC TRICK: This stops the falling note from bouncing/scaling
-	# when the Sprite2D drum pad gets hit!
 	note.set_as_top_level(true)
 
-	var start_pos: Vector2 = global_position + Vector2(-0, -spawn_distance)
-	var target_pos: Vector2 = global_position + Vector2(-0, -25)
+	var start_pos: Vector2 = global_position + Vector2(0, -spawn_distance)
+	var target_pos: Vector2 = global_position + target_hit_offset
 
 	note.global_position = start_pos
-	note.z_index = 100 # Forces note in front of the drum pad
+	note.z_index = 100 
 	note.frame_coords.x = frame_coords.x
 
-	# Store the timing info the note needs to travel on the song's clock,
-	# not on delta-time, so it lands exactly on hit_time regardless of
-	# frame-rate hitches.
 	note.set_meta("spawn_time", Conductor.get_song_position())
 	note.set_meta("hit_time", hit_time)
 	note.set_meta("start_y", start_pos.y)
@@ -84,10 +82,6 @@ func spawn_beat(hit_time: float) -> void:
 func _process(_delta: float) -> void:
 	var song_time: float = Conductor.get_song_position()
 
-	# Move notes using the audio clock instead of note_speed * delta.
-	# progress = 0 at spawn, 1 exactly at hit_time -> the note is
-	# guaranteed to be at the pad the instant the beat is due, synced
-	# to the same clock the song is playing on.
 	for i in range(active_notes.size() - 1, -1, -1):
 		var note = active_notes[i]
 		var spawn_time: float = note.get_meta("spawn_time")
@@ -100,52 +94,78 @@ func _process(_delta: float) -> void:
 
 		note.global_position.y = lerp(start_y, target_y, progress)
 
-		# If the note is well past its hit_time and still un-hit, it's a miss.
-		if song_time > hit_time + hit_window:
+		# --- AUTOPLAY / BOT LOGIC ---
+		if not input_enabled and song_time >= hit_time:
+			trigger_hit_effect()
+			show_feedback("PERFECT!!", Color.CYAN)
+			active_notes.remove_at(i)
+			note.queue_free()
+			continue # Skip the miss check below since the note is gone
+
+		# Drop the note if it completely passes the miss window (Player logic)
+		if song_time > hit_time + miss_window:
 			show_feedback("MISS!", Color.RED)
 			active_notes.remove_at(i)
 			note.queue_free()
+			
 
 # ---------------------------------------------------------
 # INPUT & HIT DETECTION
 # ---------------------------------------------------------
 func _unhandled_input(event: InputEvent) -> void:
-	if input_enabled == false:
+	if not input_enabled:
 		return
-	# Check if THIS specific pad's action was pressed
-	if event.is_action_pressed(input_action):
+		
+	if event.is_action_pressed(input_action, false):
 		trigger_hit_effect()
 		evaluate_hit()
 
 func trigger_hit_effect() -> void:
-	# Visual flare: Quick juice effect using a Tween
+	# Removed the input_enabled check here so the bot can still bounce the pad visually!
 	var tween = create_tween()
 	tween.tween_property(self, "scale", o_scale + Vector2(scale_factor, scale_factor), 0.05)
 	tween.tween_property(self, "scale", o_scale, 0.1)
 
 func evaluate_hit() -> void:
 	if active_notes.is_empty():
-		return # Pressed the pad, but no notes are falling
+		return 
 
-	# Check the note whose hit_time is soonest — judged against the song
-	# clock, in seconds, rather than pixel distance. This ties hit
-	# accuracy directly to the JSON timing instead of visual position,
-	# so it stays correct even if note_speed or spawn_distance change.
-	var target_note = active_notes[0]
-	var hit_time: float = target_note.get_meta("hit_time")
 	var song_time: float = Conductor.get_song_position()
-	var time_diff: float = abs(song_time - hit_time)
-
-	# HIT WINDOWS (seconds)
-	if time_diff <= hit_window * 0.25:
+	
+	var target_note = null
+	var best_time_diff = 999.0
+	
+	# 1. Find the oldest note that is ACTUALLY inside our hit zone
+	for note in active_notes:
+		var hit_time: float = note.get_meta("hit_time")
+		var time_diff: float = abs(song_time - (hit_time + input_offset))
+		
+		if time_diff <= miss_window:
+			target_note = note
+			best_time_diff = time_diff
+			break # Found the closest valid note
+			
+	# 2. If the player pressed a button but the note is STILL way too far away
+	if target_note == null:
+		show_feedback("MISS!", Color.RED)
+		return
+		
+	# 3. Evaluate the note based on the expanded windows
+	if best_time_diff <= perfect_window:
 		show_feedback("PERFECT!!", Color.CYAN)
-		destroy_note(target_note)
-	elif time_diff <= hit_window * 0.6:
+		Highscore.add_score(PERFECT_SCORE)
+
+	elif best_time_diff <= good_window:
 		show_feedback("GOOD", Color.GREEN)
-		destroy_note(target_note)
-	elif time_diff <= hit_window:
+		Highscore.add_score(GOOD_SCORE)
+	elif best_time_diff <= near_window:
 		show_feedback("NEAR", Color.YELLOW)
-		destroy_note(target_note)
+		Highscore.add_score(NEAR_SCORE)
+	else:
+		# It's within the miss_window (0.4s) but outside the near_window
+		show_feedback("MISS!", Color.RED)
+
+	destroy_note(target_note)
 
 func destroy_note(note) -> void:
 	active_notes.erase(note)
@@ -161,7 +181,6 @@ func show_feedback(text: String, color: Color) -> void:
 	label.modulate = color
 	label.modulate.a = 1.0
 
-	# Start slightly above the pad
 	var base_y = -60
 	label.position.y = base_y
 	label.scale = Vector2(1.5, 1.5)
@@ -170,7 +189,6 @@ func show_feedback(text: String, color: Color) -> void:
 
 	var active_tween = create_tween().set_parallel(true)
 
-	# Pop in, float up, and fade out
 	active_tween.tween_property(label, "scale", Vector2.ONE, 0.2)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
@@ -180,5 +198,4 @@ func show_feedback(text: String, color: Color) -> void:
 	active_tween.tween_property(label, "modulate:a", 0.0, 0.3)\
 		.set_delay(0.2)
 
-	# Clean up the clone once its animation finishes so labels don't pile up
 	active_tween.chain().tween_callback(label.queue_free)

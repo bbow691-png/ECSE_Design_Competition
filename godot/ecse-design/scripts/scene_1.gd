@@ -1,36 +1,49 @@
 extends Node2D
 
 @onready var background = $Background
-@onready var foreground = $Foreground
-# The target base scale for both layers
-var base_scale: Vector2 = Vector2(1.0, 1.0)
-# A modifier variable that tweens back to 0
-var zoom_pulse: float = 0.0
+@onready var foreground: CanvasLayer = $Foreground
+@onready var camera: Camera2D = $Camera2D
 
-@export var level_music:AudioStream 
-@export var bpm:int = 128
-@export var fade_time:float = 1.0
+# Handheld Panning Settings
+@export var pan_speed: float = 0.4         # Overall speed of the movement
+@export var pan_amplitude_x: float = 60.0  # Max horizontal drift
+@export var pan_amplitude_y: float = 30.0  # Max vertical drift
+
+# Static Zoom Setting
+@export var base_zoom: Vector2 = Vector2(1.05, 1.05) # Slightly zoomed in
+
+var _time_accum: float = 0.0
+var camera_base_position: Vector2
+
 func _ready() -> void:
-	# Connect to your sound node's signal
-	
-	#Conductor.play_with_fade(level_music,bpm,fade_time)
-	pass
-	
-	
-func _process(_delta: float) -> void:
-	# BACKGROUND: Multiplied by 0.3 (moves/zooms very subtly)
-	background.scale = base_scale + Vector2(zoom_pulse * 0.01, zoom_pulse * 0.01)
-	
-	# FOREGROUND: Multiplied by 1.0 (gets the full energetic punch)
-	foreground.scale = base_scale + Vector2(zoom_pulse * 0.04, zoom_pulse * 0.04)
+	Highscore.reset_score()
+	if camera:
+		# Establish the center resting point and apply the static zoom
+		camera.global_position = get_viewport_rect().size / 2.0
+		camera_base_position = camera.global_position
+		camera.zoom = base_zoom
+	Conductor.song_finished.connect(_on_song_finished) 
+const HIGHSCORE_SCENE: String = "res://scenes/high_score.tscn"
 
-func _on_beat_hit(current_beat: int) -> void:
-	# Only pulse on the prominent downbeats (every 2nd beat)
-	if current_beat % 2 == 0:
-		var tween = create_tween()
-		
-		# 1. Instantly set pulse intensity to maximum
-		zoom_pulse = 1.0
-		
-		# 2. Smoothly decay the pulse back down to 0 before the next beat
-		tween.tween_property(self, "zoom_pulse", 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func _on_song_finished() -> void:
+	SceneTransition.fade_to_scene(HIGHSCORE_SCENE)
+
+func _process(delta: float) -> void:
+	_time_accum += delta
+
+	if camera:
+		_apply_organic_pan(delta)
+
+func _apply_organic_pan(delta: float) -> void:
+	var t := _time_accum * pan_speed
+	
+	# Layering sine waves at different, irregular frequencies (e.g., 1.73, 2.14).
+	# This prevents the pattern from repeating too obviously and breaks the "circle".
+	var sway_x := sin(t) * 0.65 + sin(t * 1.73 + 1.0) * 0.35
+	var sway_y := cos(t * 0.85) * 0.65 + sin(t * 2.14 + 2.0) * 0.35
+	
+	var target_pos := camera_base_position + Vector2(sway_x * pan_amplitude_x, sway_y * pan_amplitude_y)
+	
+	# Apply the position smoothly
+	camera.global_position = camera.global_position.lerp(target_pos, delta * 3.0)

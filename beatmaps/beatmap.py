@@ -1,61 +1,9 @@
 #!/usr/bin/env python3
 """
-osu_to_beatmap.py
+osu_to_beatmap.py (Unified Converter & Audio Extractor)
 
 Converts an osu! beatmap (.osz package or a single .osu file) into the
-project's rhythm-game JSON format:
-
-{
-    "source_file": "...",
-    "tempo_bpm": 165.8,
-    "pads": 4,
-    "note_count": 153,
-    "notes": [
-        {"time": 0.07, "pad": 2, "boss": 0},
-        {"time": 1.155, "pad": 1, "boss": 0},
-        ...
-    ]
-}
-
-osu!standard maps don't have lanes — each hit object has a free x/y
-position on a 512x384 playfield. This script assigns a pad by dividing
-the playfield into `--pads` equal-width vertical columns (the same
-technique used by osu-to-mania converters), so hits spread across the
-screen become hits spread across your pads.
-
-Sliders and spinners are held notes in osu, not discrete taps. By
-default only their START is used as a hit. Use --slider-ends to also
-add a note at the end of each slider, and --spinners to add a note at
-the start of each spinner.
-
-Every note is also tagged with a "boss" field (0 or 1) marking whether
-it falls in a "boss" section or a "player" section of the song. The
-song's timeline is divided into repeating cycles made of a boss chunk
-followed by a player chunk. The length of each chunk is measured in
-beats (via the map's BPM), controlled by --boss-section-beats. The
-ratio between the boss chunk and the player chunk is 1:3 by default,
-except for "easy" difficulties (difficulty name contains "easy",
-case-insensitive), which use a 1:1 ratio instead. Use --boss-ratio to
-override the ratio explicitly for any difficulty.
-
-Requirements: none beyond the Python standard library.
-
-Usage:
-    # List the difficulties in a beatmap package
-    python osu_to_beatmap.py map.osz --list
-
-    # Convert one difficulty
-    python osu_to_beatmap.py map.osz --difficulty Insane -o beatmap.json
-
-    # Convert a single loose .osu file
-    python osu_to_beatmap.py song.osu -o beatmap.json
-
-    # Also stage a ready-to-drop-in song folder for the Godot project
-    # (writes beatmap.json + song1.mp3 into the given folder)
-    python osu_to_beatmap.py map.osz --difficulty Insane --song-folder songs/gravity_falls
-
-    # Tweak the boss/player section sizing
-    python osu_to_beatmap.py map.osz --difficulty Insane --boss-section-beats 16 --boss-ratio 1:4
+project's rhythm-game JSON format, and can accurately extract its audio.
 """
 
 import argparse
@@ -64,48 +12,34 @@ import os
 import re
 import shutil
 import sys
-import tempfile
 import zipfile
-
 
 PLAYFIELD_WIDTH = 512
 
 
-def find_osu_files(root_dir):
-    """Return paths to all .osu files under root_dir."""
-    matches = []
-    for dirpath, _dirnames, filenames in os.walk(root_dir):
-        for name in filenames:
-            if name.lower().endswith(".osu"):
-                matches.append(os.path.join(dirpath, name))
-    return sorted(matches)
-
-
-def parse_osu_sections(osu_path):
+def parse_osu_sections(lines):
     """
-    Very small .osu parser: splits the file into named sections
-    (General, Metadata, Difficulty, TimingPoints, HitObjects, ...)
-    and returns them as a dict of path -> list[str] raw lines.
+    Splits the file lines into named sections (General, Metadata, etc.)
+    and returns them as a dict of section_name -> list[str] raw lines.
     """
     sections = {}
     current = None
-    with open(osu_path, "r", encoding="utf-8-sig") as f:
-        for raw_line in f:
-            line = raw_line.rstrip("\r\n")
-            if not line:
-                continue
-            header_match = re.match(r"^\[(\w+)\]$", line)
-            if header_match:
-                current = header_match.group(1)
-                sections[current] = []
-                continue
-            if current is not None:
-                sections[current].append(line)
+    for raw_line in lines:
+        line = raw_line.rstrip("\r\n")
+        if not line:
+            continue
+        header_match = re.match(r"^\[(\w+)\]$", line)
+        if header_match:
+            current = header_match.group(1)
+            sections[current] = []
+            continue
+        if current is not None:
+            sections[current].append(line)
     return sections
 
 
 def parse_key_values(lines):
-    """Parse 'Key: Value' lines (General/Metadata/Difficulty sections)."""
+    """Parse 'Key: Value' lines."""
     kv = {}
     for line in lines:
         if ":" not in line:
@@ -115,19 +49,20 @@ def parse_key_values(lines):
     return kv
 
 
-def get_difficulty_name(osu_path):
-    sections = parse_osu_sections(osu_path)
-    meta = parse_key_values(sections.get("Metadata", []))
-    return meta.get("Version", os.path.basename(osu_path))
+class OsuMap:
+    """Helper class to hold parsed map metadata."""
+    def __init__(self, filename, lines):
+        self.filename = filename
+        self.sections = parse_osu_sections(lines)
+        self.meta = parse_key_values(self.sections.get("Metadata", []))
+        self.general = parse_key_values(self.sections.get("General", []))
+        
+        self.title = self.meta.get("Title", os.path.splitext(os.path.basename(filename))[0])
+        self.difficulty_name = self.meta.get("Version", os.path.basename(filename))
+        self.audio_filename = self.general.get("AudioFilename", "")
 
 
 def compute_bpm(timing_point_lines):
-    """
-    The primary BPM is taken from the first uninherited timing point
-    (an uninherited point has a positive beatLength, in ms per beat).
-    Inherited points (negative beatLength = slider-velocity multiplier)
-    are skipped for this purpose.
-    """
     for line in timing_point_lines:
         parts = line.split(",")
         if len(parts) < 2:
@@ -142,34 +77,20 @@ def compute_bpm(timing_point_lines):
 
 
 def x_to_pad(x, pads):
-    """Map an osu playfield x-coordinate (0-512) to a pad 1..pads."""
     x = min(max(x, 0), PLAYFIELD_WIDTH - 1)
     column = int(x / PLAYFIELD_WIDTH * pads)
     return min(max(column, 0), pads - 1) + 1
 
 
 def estimate_slider_duration_ms(params, timing_point_lines, hit_time_ms, slider_multiplier):
-    """
-    Rough slider duration estimate in ms, using the active inherited
-    timing point's SV multiplier (if any) and the base slider multiplier
-    from [Difficulty]. Good enough for placing an end-of-slider note;
-    not meant to be beat-perfect.
-
-    params: the hit object's extra field list after hitSound
-        e.g. ["P|376:256|440:232", "2", "96", ...]
-        index 1 = number of slides (repeat count)
-        index 2 = pixel length of one slide
-    """
     try:
         repeat_count = int(params[1])
         pixel_length = float(params[2])
     except (IndexError, ValueError):
         return 0.0
 
-    # find the most recent timing point at/before hit_time to get its
-    # inherited SV multiplier (negative beatLength = -100/multiplier)
     sv_multiplier = 1.0
-    beat_length = 500.0  # fallback
+    beat_length = 500.0
     for line in timing_point_lines:
         parts = line.split(",")
         if len(parts) < 2:
@@ -196,12 +117,9 @@ def estimate_slider_duration_ms(params, timing_point_lines, hit_time_ms, slider_
 
 
 def parse_ratio(ratio_str):
-    """Parse a 'A:B' ratio string into a (float, float) tuple."""
     match = re.match(r"^\s*(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\s*$", ratio_str)
     if not match:
-        raise argparse.ArgumentTypeError(
-            f"Invalid ratio '{ratio_str}', expected format like '1:3'"
-        )
+        raise argparse.ArgumentTypeError(f"Invalid ratio '{ratio_str}'")
     a, b = float(match.group(1)), float(match.group(2))
     if a <= 0 or b <= 0:
         raise argparse.ArgumentTypeError("Ratio parts must be positive")
@@ -209,18 +127,7 @@ def parse_ratio(ratio_str):
 
 
 def assign_boss_sections(notes, bpm, difficulty_name, section_beats, ratio_override=None):
-    """
-    Tags each note in-place with a "boss" field (0 or 1).
-
-    The timeline is divided into repeating cycles of
-    [boss chunk][player chunk]. Chunk lengths are `section_beats` beats
-    each, scaled by the boss:player ratio. Default ratio is 1:3, except
-    "easy" difficulties (name contains "easy", case-insensitive) which
-    use 1:1. `ratio_override`, if given, takes precedence over both.
-    """
     if bpm <= 0:
-        # No usable tempo — can't derive section lengths in beats, so
-        # everything falls in the player section.
         for note in notes:
             note["boss"] = 0
         return notes
@@ -240,7 +147,6 @@ def assign_boss_sections(notes, bpm, difficulty_name, section_beats, ratio_overr
     for note in notes:
         position_in_cycle = note["time"] % cycle_len
         note["boss"] = 1 if position_in_cycle < boss_len else 0
-
     return notes
 
 
@@ -265,7 +171,6 @@ def convert_hit_objects(sections, pads, include_slider_ends, include_spinners):
         is_circle = bool(obj_type & 1)
         is_slider = bool(obj_type & 2)
         is_spinner = bool(obj_type & 8)
-
         pad = x_to_pad(x, pads)
 
         if is_circle:
@@ -274,7 +179,6 @@ def convert_hit_objects(sections, pads, include_slider_ends, include_spinners):
         elif is_slider:
             notes.append({"time": time_ms / 1000.0, "pad": pad})
             if include_slider_ends:
-                extra = parts[5:] if len(parts) > 5 else []
                 slider_params = [parts[5] if len(parts) > 5 else ""] + parts[6:8]
                 duration_ms = estimate_slider_duration_ms(
                     slider_params, timing_point_lines, time_ms, slider_multiplier
@@ -293,161 +197,105 @@ def convert_hit_objects(sections, pads, include_slider_ends, include_spinners):
     return notes
 
 
-def convert_osu_file(osu_path, pads, include_slider_ends, include_spinners,
-                      boss_section_beats, boss_ratio_override=None):
-    sections = parse_osu_sections(osu_path)
-    general = parse_key_values(sections.get("General", []))
-    meta = parse_key_values(sections.get("Metadata", []))
+def convert_osu_file(osu_map, pads, include_slider_ends, include_spinners, boss_section_beats, boss_ratio_override=None):
+    bpm = compute_bpm(osu_map.sections.get("TimingPoints", []))
+    notes = convert_hit_objects(osu_map.sections, pads, include_slider_ends, include_spinners)
 
-    bpm = compute_bpm(sections.get("TimingPoints", []))
-    notes = convert_hit_objects(sections, pads, include_slider_ends, include_spinners)
+    assign_boss_sections(notes, bpm, osu_map.difficulty_name, boss_section_beats, boss_ratio_override)
 
-    title = meta.get("Title", os.path.splitext(os.path.basename(osu_path))[0])
-    version = meta.get("Version", "")
-    audio_filename = general.get("AudioFilename", "")
-
-    assign_boss_sections(notes, bpm, version, boss_section_beats, boss_ratio_override)
-
-    result = {
-        "source_file": os.path.basename(osu_path),
-        "title": title,
-        "difficulty": version,
+    return {
+        "source_file": os.path.basename(osu_map.filename),
+        "title": osu_map.title,
+        "difficulty": osu_map.difficulty_name,
         "tempo_bpm": round(bpm, 2),
         "pads": pads,
         "note_count": len(notes),
         "notes": notes,
     }
-    return result, audio_filename
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Convert an osu! beatmap (.osz or .osu) into the project's rhythm-game JSON format."
-    )
+    parser = argparse.ArgumentParser(description="Convert an osu! beatmap and optionally extract its audio.")
     parser.add_argument("input", help="Path to a .osz package or a single .osu file")
-    parser.add_argument(
-        "-o", "--output",
-        help="Path to the output JSON file (default: <difficulty>_beatmap.json)",
-    )
-    parser.add_argument(
-        "--difficulty",
-        help="Difficulty name to convert (case-insensitive substring match, "
-             "e.g. 'insane'). Required if the .osz has more than one "
-             "difficulty and --list is not used.",
-    )
-    parser.add_argument(
-        "--list",
-        action="store_true",
-        help="List the difficulties available in the .osz and exit",
-    )
-    parser.add_argument(
-        "--pads",
-        type=int,
-        default=4,
-        help="Number of pads/lanes to spread hits across (default: 4)",
-    )
-    parser.add_argument(
-        "--slider-ends",
-        action="store_true",
-        help="Also emit a note at the end of each slider (approximate timing)",
-    )
-    parser.add_argument(
-        "--spinners",
-        action="store_true",
-        help="Also emit a note at the start of each spinner",
-    )
-    parser.add_argument(
-        "--boss-section-beats",
-        type=float,
-        default=8.0,
-        help="Length, in beats, of one boss/player chunk before the "
-             "boss:player ratio is applied (default: 8)",
-    )
-    parser.add_argument(
-        "--boss-ratio",
-        type=parse_ratio,
-        default=None,
-        help="Override the boss:player section-length ratio, e.g. '1:3'. "
-             "If not set, uses 1:3 normally and 1:1 for 'easy' difficulties.",
-    )
-    parser.add_argument(
-        "--song-folder",
-        help="If set, also copies the audio as song1.mp3 and writes "
-             "beatmap.json into this folder, ready to drop into your "
-             "Godot project's res://songs/<name>/ directory",
-    )
+    parser.add_argument("-o", "--output", help="Path to the output JSON file")
+    parser.add_argument("--difficulty", help="Difficulty name to convert")
+    parser.add_argument("--list", action="store_true", help="List the difficulties available in the .osz")
+    parser.add_argument("--pads", type=int, default=4, help="Number of pads/lanes (default: 4)")
+    parser.add_argument("--slider-ends", action="store_true", help="Add a note at the end of each slider")
+    parser.add_argument("--spinners", action="store_true", help="Add a note at the start of each spinner")
+    parser.add_argument("--boss-section-beats", type=float, default=8.0, help="Boss/player chunk length in beats")
+    parser.add_argument("--boss-ratio", type=parse_ratio, default=None, help="Override boss:player ratio (e.g. '1:3')")
+    parser.add_argument("--song-folder", help="Exports to this folder ready for Godot (beatmap.json + song1.mp3)")
+    parser.add_argument("--extract-audio", action="store_true", help="Extract the exact audio file locally with its original name")
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
-        print(f"Error: file not found: {args.input}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(f"Error: file not found: {args.input}")
 
-    tmp_dir = None
+    maps = []
+    is_zip = args.input.lower().endswith(".osz")
+    zf = None
+
     try:
-        if args.input.lower().endswith(".osz"):
-            tmp_dir = tempfile.mkdtemp(prefix="osz_")
-            with zipfile.ZipFile(args.input) as zf:
-                zf.extractall(tmp_dir)
-            search_root = tmp_dir
+        # 1. Read files into memory (directly from ZIP or disk)
+        if is_zip:
+            zf = zipfile.ZipFile(args.input)
+            osu_names = [n for n in zf.namelist() if n.lower().endswith(".osu")]
+            for name in osu_names:
+                with zf.open(name) as f:
+                    lines = [line.decode("utf-8-sig") for line in f]
+                maps.append(OsuMap(name, lines))
+        elif args.input.lower().endswith(".osu"):
+            with open(args.input, "r", encoding="utf-8-sig") as f:
+                lines = f.readlines()
+            maps.append(OsuMap(args.input, lines))
         else:
-            search_root = os.path.dirname(os.path.abspath(args.input)) or "."
-            if not args.input.lower().endswith(".osu"):
-                print("Error: input must be a .osz or .osu file", file=sys.stderr)
-                sys.exit(1)
+            sys.exit("Error: input must be a .osz or .osu file")
 
-        if args.input.lower().endswith(".osu"):
-            osu_files = [args.input]
-        else:
-            osu_files = find_osu_files(search_root)
+        if not maps:
+            sys.exit("Error: no .osu files found")
 
-        if not osu_files:
-            print("Error: no .osu files found", file=sys.stderr)
-            sys.exit(1)
-
+        # 2. Select the right difficulty
         if args.list:
             print("Available difficulties:")
-            for path in osu_files:
-                print(f"  - {get_difficulty_name(path)}")
+            for m in maps:
+                print(f"  - {m.difficulty_name}")
             return
 
-        if len(osu_files) == 1:
-            chosen = osu_files[0]
+        if len(maps) == 1:
+            chosen = maps[0]
         else:
             if not args.difficulty:
-                print(
-                    "Multiple difficulties found; pass --difficulty to pick one, "
-                    "or --list to see options:",
-                    file=sys.stderr,
-                )
-                for path in osu_files:
-                    print(f"  - {get_difficulty_name(path)}", file=sys.stderr)
+                print("Multiple difficulties found; pass --difficulty to pick one:", file=sys.stderr)
+                for m in maps:
+                    print(f"  - {m.difficulty_name}", file=sys.stderr)
                 sys.exit(1)
+                
             wanted = args.difficulty.lower()
-            candidates = [
-                path for path in osu_files
-                if wanted in get_difficulty_name(path).lower()
-            ]
+            candidates = [m for m in maps if wanted in m.difficulty_name.lower()]
             if not candidates:
-                print(f"Error: no difficulty matching '{args.difficulty}'", file=sys.stderr)
-                sys.exit(1)
+                sys.exit(f"Error: no difficulty matching '{args.difficulty}'")
             if len(candidates) > 1:
-                print(
-                    f"Error: '{args.difficulty}' matches multiple difficulties, be more specific:",
-                    file=sys.stderr,
-                )
-                for path in candidates:
-                    print(f"  - {get_difficulty_name(path)}", file=sys.stderr)
+                print(f"Error: '{args.difficulty}' matches multiple difficulties:", file=sys.stderr)
+                for m in candidates:
+                    print(f"  - {m.difficulty_name}", file=sys.stderr)
                 sys.exit(1)
             chosen = candidates[0]
 
-        print(f"Converting difficulty: {get_difficulty_name(chosen)}")
-        result, audio_filename = convert_osu_file(
+        # 3. Convert beatmap logic
+        print(f"Converting difficulty: {chosen.difficulty_name}")
+        result = convert_osu_file(
             chosen, args.pads, args.slider_ends, args.spinners,
             args.boss_section_beats, args.boss_ratio,
         )
 
-        difficulty_slug = re.sub(r"[^a-zA-Z0-9]+", "_", get_difficulty_name(chosen)).strip("_").lower()
+        # 4. Handle JSON output
+        difficulty_slug = re.sub(r"[^a-zA-Z0-9]+", "_", chosen.difficulty_name).strip("_").lower()
         output_path = args.output or f"{difficulty_slug}_beatmap.json"
+
+        if args.song_folder:
+            os.makedirs(args.song_folder, exist_ok=True)
+            output_path = os.path.join(args.song_folder, "beatmap.json")
 
         with open(output_path, "w") as f:
             json.dump(result, f, indent=2)
@@ -457,30 +305,34 @@ def main():
         print(f"Notes: {result['note_count']} ({boss_count} boss / {result['note_count'] - boss_count} player)")
         print(f"Wrote '{output_path}'")
 
-        if args.song_folder:
-            os.makedirs(args.song_folder, exist_ok=True)
-            dest_json = os.path.join(args.song_folder, "beatmap.json")
-            with open(dest_json, "w") as f:
-                json.dump(result, f, indent=2)
-            print(f"Wrote '{dest_json}'")
+        # 5. Handle Audio Extraction using parsed AudioFilename
+        if chosen.audio_filename and (args.song_folder or args.extract_audio):
+            # Target path depends on whether we are formatting for Godot or local extraction
+            if args.song_folder:
+                dest_audio = os.path.join(args.song_folder, "song1.mp3")
+            else:
+                dest_audio = chosen.audio_filename
 
-            if audio_filename:
-                audio_src = os.path.join(os.path.dirname(chosen), audio_filename)
+            if is_zip:
+                # Find matching file in zip (case-insensitive search)
+                audio_member = next((n for n in zf.namelist() if n.lower() == chosen.audio_filename.lower()), None)
+                if audio_member:
+                    with zf.open(audio_member) as src, open(dest_audio, "wb") as dst:
+                        shutil.copyfileobj(src, dst)
+                    print(f"Extracted audio to '{dest_audio}'")
+                else:
+                    print(f"Warning: Audio '{chosen.audio_filename}' not found in archive", file=sys.stderr)
+            else:
+                audio_src = os.path.join(os.path.dirname(os.path.abspath(args.input)), chosen.audio_filename)
                 if os.path.isfile(audio_src):
-                    dest_audio = os.path.join(args.song_folder, "song1.mp3")
                     shutil.copyfile(audio_src, dest_audio)
                     print(f"Copied audio to '{dest_audio}'")
                 else:
-                    print(
-                        f"Warning: audio file '{audio_filename}' referenced in the "
-                        ".osu but not found; copy your song1.mp3 manually.",
-                        file=sys.stderr,
-                    )
+                    print(f"Warning: Audio file '{chosen.audio_filename}' not found on disk", file=sys.stderr)
 
     finally:
-        if tmp_dir:
-            shutil.rmtree(tmp_dir, ignore_errors=True)
-
+        if zf:
+            zf.close()
 
 if __name__ == "__main__":
     main()

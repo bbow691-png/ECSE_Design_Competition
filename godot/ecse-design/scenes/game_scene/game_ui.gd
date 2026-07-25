@@ -14,6 +14,11 @@ func _ready() -> void:
 		dp2.input_enabled = true
 		dp3.input_enabled = true
 		dp4.input_enabled = true
+	else:
+		dp1.input_enabled = false
+		dp2.input_enabled = false
+		dp3.input_enabled = false
+		dp4.input_enabled = false
 	if lane_num == 1:
 		dp1.lane_num = 1
 		dp2.lane_num = 1

@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://b205bjmqdobp4"]
+
+[ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="1_1kxst"]
+[ext_resource type="Script" uid="uid://bafl2ngchvha" path="res://scenes/game_scene/drum_pad_menu.gd" id="2_qfx02"]
+
+[node name="GameUI" unique_id=2092615904 instance=ExtResource("1_1kxst")]
+
+[node name="DrumPad3" parent="." index="0" unique_id=1222817773]
+script = ExtResource("2_qfx02")
+input_action = "upp_left"
+
+[node name="DrumPad4" parent="." index="1" unique_id=808055484]
+script = ExtResource("2_qfx02")
+input_action = "upp_left"
+
+[node name="DrumPad2" parent="." index="2" unique_id=877490846]
+script = ExtResource("2_qfx02")
+input_action = "upp_left"
+
+[node name="DrumPad1" parent="." index="3" unique_id=622295038]
+script = ExtResource("2_qfx02")

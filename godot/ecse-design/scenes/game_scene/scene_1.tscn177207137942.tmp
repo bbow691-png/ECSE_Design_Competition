@@ -3,13 +3,10 @@
 [ext_resource type="Script" uid="uid://cd2qonc5otexv" path="res://scripts/scene_1.gd" id="1_d7a6c"]
 [ext_resource type="Texture2D" uid="uid://l0k204jpr7rc" path="res://assets/Spritesheets/Swamp_bg.png" id="3_52ejm"]
 [ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="4_3jmp3"]
-[ext_resource type="FontFile" uid="uid://8c5rb7ckcndf" path="res://LilitaOne-Regular.ttf" id="4_at80i"]
 [ext_resource type="Script" uid="uid://dwp6fjgvnnktn" path="res://scenes/game_scene/label.gd" id="4_c18ma"]
 [ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="4_dyg8e"]
 [ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
-[ext_resource type="Script" path="res://scenes/game_scene/health_bar.gd" id="8_hlthb"]
-[ext_resource type="PackedScene" path="res://scenes/game_scene/end_screen.tscn" id="9_endscr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_c18ma"]
 shader = ExtResource("4_dyg8e")
@@ -58,24 +55,18 @@ grow_vertical = 2
 layer = 5
 follow_viewport_enabled = true
 
-[node name="HealthBar" type="ProgressBar" parent="UI"]
-anchors_preset = 10
-anchor_left = 0.3
-anchor_right = 0.7
-offset_top = 24.0
-offset_bottom = 64.0
+[node name="Label" type="Label" parent="UI" unique_id=431292366]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
 grow_horizontal = 2
-min_value = 0.0
-max_value = 100.0
-value = 50.0
-show_percentage = false
-script = ExtResource("8_hlthb")
-
-[node name="EndScreen" parent="UI" instance=ExtResource("9_endscr")]
-
-[node name="EndScreenDelay" type="Timer" parent="."]
-wait_time = 1.0
-one_shot = true
+label_settings = SubResource("LabelSettings_3jmp3")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_c18ma")
 
 [node name="Foreground" type="CanvasLayer" parent="." unique_id=998582307]
 layer = 3

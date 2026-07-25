@@ -18,19 +18,24 @@ script = ExtResource("1_seekm")
 position = Vector2(441, 109)
 frame = 2
 input_action = "low_righ"
-frame_num = 2
+good_window = 0.1
+near_window = 0.15
 
 [node name="DrumPad4" parent="." unique_id=808055484 instance=ExtResource("1_yubou")]
 position = Vector2(596, 94)
 frame = 3
 input_action = "upp_righ"
-frame_num = 3
+good_window = 0.1
+near_window = 0.15
 
 [node name="DrumPad2" parent="." unique_id=877490846 instance=ExtResource("1_yubou")]
 position = Vector2(254, 105)
 frame = 1
 input_action = "low_left"
-frame_num = 1
+good_window = 0.1
+near_window = 0.15
 
 [node name="DrumPad1" parent="." unique_id=622295038 instance=ExtResource("1_yubou")]
 position = Vector2(74, 116)
+good_window = 0.1
+near_window = 0.15

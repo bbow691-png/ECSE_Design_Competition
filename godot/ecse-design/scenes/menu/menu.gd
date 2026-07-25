@@ -8,8 +8,7 @@ const OPTIONS_SCENE: String = "res://scenes/map_scene.tscn"
 @onready var options_btn: Button = $MenuContainer/Options
 @onready var exit_btn: Button = $MenuContainer/Exit
 # 1. Drag and drop your menu music file here in the Inspector!
-@export var menu_music: AudioStream
-@export var menu_bpm: float = 115.0 # Set this to your song's actual BPM
+@export var menu_music: String
 @export var fade_time: float = 5.0
 
 @onready var beat_flasher: ColorRect = $BeatFlasher
@@ -23,7 +22,7 @@ func _ready() -> void:
 	# 1. Start the menu music looping
 	if menu_music != null:
 		# 2. Feed the song and BPM to the global Conductor
-		Conductor.play_with_fade(menu_music, menu_bpm,fade_time)
+		Conductor.play_song(menu_music, fade_time)
 	else:
 		push_warning("Forgot to assign 'menu_music' in the Inspector!")
 	# 2. Connect the button click signals
@@ -95,7 +94,6 @@ func _trigger_transition_to(target_scene: String, clicked_button: Button) -> voi
 	# Play a "confirm" sound effect if you have one
 	# $ConfirmSound.play()
 
-	# --- THE FIX: Call the custom flash function instead of using modulate! ---
 	if clicked_button.has_method("confirm_flash"):
 		clicked_button.confirm_flash()
 

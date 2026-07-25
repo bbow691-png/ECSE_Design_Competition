@@ -33,7 +33,7 @@
 //A real strike's vibration reaches neighbouring piezos within ~1ms and can
 //cross their threshold too. Once any channel fires, ignore ALL channels for
 //this long so one physical hit can't be reported as hits on multiple pads.
-#define CROSSTALK_MASK_MS   15
+#define CROSSTALK_MASK_MS   15  //Time debounce before A strike can take place again on the same channel
 
 //Struct to track state of each piezo channel
 struct PiezoChannel {

@@ -105,6 +105,12 @@ func _process(_delta: float) -> void:
 		# Drop the note if it completely passes the miss window (Player logic)
 		if song_time > hit_time + miss_window:
 			show_feedback("MISS!", Color.RED)
+			# Only the interactive pad row should cost health — the
+			# non-input boss/decoration row also "misses" every note it
+			# never hits, and that's expected, not a player failure.
+			if input_enabled:
+				Health.apply_judgement("MISS!")
+				Score.add_judgement("MISS!")
 			active_notes.remove_at(i)
 			note.queue_free()
 			
@@ -153,14 +159,14 @@ func evaluate_hit() -> void:
 	# 3. Evaluate the note based on the expanded windows
 	if best_time_diff <= perfect_window:
 		show_feedback("PERFECT!!", Color.CYAN)
-		Highscore.add_score(PERFECT_SCORE)
+		Score.add_score(PERFECT_SCORE)
 
 	elif best_time_diff <= good_window:
 		show_feedback("GOOD", Color.GREEN)
-		Highscore.add_score(GOOD_SCORE)
+		Score.add_score(GOOD_SCORE)
 	elif best_time_diff <= near_window:
 		show_feedback("NEAR", Color.YELLOW)
-		Highscore.add_score(NEAR_SCORE)
+		Score.add_score(NEAR_SCORE)
 	else:
 		# It's within the miss_window (0.4s) but outside the near_window
 		show_feedback("MISS!", Color.RED)

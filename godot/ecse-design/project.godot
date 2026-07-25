@@ -22,10 +22,11 @@ buses/default_bus_layout="uid://btvtfhs1vklab"
 [autoload]
 
 Conductor="*uid://cw7n0rjke4iao"
+Health="*res://scripts/Health.gd"
 PiezoInput="*res://scripts/piezo_input.gd"
 SceneTransition="*uid://buyk2dc75ft87"
-SongManager="uid://ci00ihubd4opx"
-Highscore="*uid://dgk2l1o1tkfcq"
+Score="*res://scripts/Score.gd"
+SongManager="*uid://ci00ihubd4opx"
 
 [display]
 

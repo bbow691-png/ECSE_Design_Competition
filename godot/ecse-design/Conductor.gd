@@ -21,7 +21,18 @@ var song_step: int = 0
 signal beat_hit(beat: int)
 signal step_hit(step: int)
 signal note_spawned(lane_index: int, hit_time: float, boss: int)
+<<<<<<< HEAD
+# Fires once when the currently loaded song's audio stops on its own —
+# i.e. active_player.playing goes true -> false while a song is still
+# considered "in progress" (is_playing). Pausing for game-over uses
+# stream_paused instead of stop(), so that case never flips .playing
+# and can't be confused with a real end-of-song here.
 signal song_finished
+
+var _was_audio_playing: bool = false
+=======
+signal song_finished
+>>>>>>> main
 
 # --- Dynamic Audio Players (crossfade system) ---
 var active_player: AudioStreamPlayer
@@ -183,6 +194,7 @@ func _play_stream_with_fade(song_name: String, new_bpm: float, fade_time: float 
 func _process(delta: float) -> void:
 	_process_beat_tracking()
 	_process_note_spawning()
+	_process_song_end_detection()
 
 
 func _process_beat_tracking() -> void:
@@ -234,3 +246,70 @@ func _process_note_spawning() -> void:
 			current_note_index += 1
 		else:
 			break
+<<<<<<< HEAD
+
+
+func _process_song_end_detection() -> void:
+	var currently_playing: bool = active_player.playing
+	if is_playing and _was_audio_playing and not currently_playing:
+		song_finished.emit()
+	_was_audio_playing = currently_playing
+
+
+# Called by Health.gd when health hits zero — halts note spawning and
+# freezes the audio in place so the failed run doesn't keep playing
+# under the paused tree.
+func pause_song() -> void:
+	is_playing = false
+	if active_player:
+		active_player.stream_paused = true
+
+
+func load_and_play_song(song_folder_path: String, fade_time: float = 1.0) -> void:
+	var json_path = song_folder_path + "/beatmap.json"
+	if not FileAccess.file_exists(json_path):
+		print("Beatmap not found at: ", json_path)
+		return
+
+	var file = FileAccess.open(json_path, FileAccess.READ)
+	var json_text = file.get_as_text()
+	file.close()
+	var json = JSON.new()
+	var error = json.parse(json_text)
+	if error != OK:
+		print("JSON Parse Error: ", json.get_error_message())
+		return
+
+	var beatmap: Dictionary = json.get_data()
+
+	# --- Load the mp3 ---
+	var mp3_path = song_folder_path + "/song1.mp3"
+	if not FileAccess.file_exists(mp3_path):
+		print("MP3 not found at: ", mp3_path)
+		return
+
+	var mp3_file = FileAccess.open(mp3_path, FileAccess.READ)
+	var mp3_bytes = mp3_file.get_buffer(mp3_file.get_length())
+	mp3_file.close()
+
+	var stream = AudioStreamMP3.new()
+	stream.data = mp3_bytes
+
+	# Accept either key so this works whether the beatmap was exported with
+	# "bpm" or "tempo_bpm" (the beat_mapper.py script writes "tempo_bpm").
+	var song_bpm: float = beatmap.get("bpm", beatmap.get("tempo_bpm", bpm))
+
+	# Route through the same crossfade system used by play_with_fade so only
+	# one song is ever audibly playing at a time (aside from the brief
+	# crossfade window).
+	play_with_fade(stream, song_bpm, fade_time, true)
+
+	# Beatmap state is set up AFTER play_with_fade so it can't be wiped out
+	# by play_with_fade's own reset-on-call-without-beatmap safety above.
+	current_beatmap = beatmap
+	current_note_index = 0
+	is_playing = true
+
+	print("Loaded song: ", current_beatmap.get("source_file", current_beatmap.get("title", "Unknown")))
+=======
+>>>>>>> main

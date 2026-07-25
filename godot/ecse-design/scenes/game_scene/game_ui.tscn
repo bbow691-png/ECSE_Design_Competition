@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://ewc68dr5cv17"]
 
+[ext_resource type="Script" uid="uid://c14quy61myvuf" path="res://scenes/game_scene/game_ui.gd" id="1_seekm"]
 [ext_resource type="PackedScene" uid="uid://doapvkvqtqmb" path="res://scenes/game_scene/drum_pad.tscn" id="1_yubou"]
 
 [node name="GameUI" type="Control" unique_id=2092615904]
@@ -7,23 +8,29 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -1320.0
+offset_bottom = -780.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_seekm")
 
 [node name="DrumPad3" parent="." unique_id=1222817773 instance=ExtResource("1_yubou")]
-position = Vector2(1507, 942)
-input_action = "upp_righ"
+position = Vector2(441, 109)
+frame = 2
+input_action = "low_righ"
 frame_num = 2
 
 [node name="DrumPad4" parent="." unique_id=808055484 instance=ExtResource("1_yubou")]
-position = Vector2(1690, 947)
-input_action = "low_righ"
+position = Vector2(596, 94)
+frame = 3
+input_action = "upp_righ"
 frame_num = 3
 
 [node name="DrumPad2" parent="." unique_id=877490846 instance=ExtResource("1_yubou")]
-position = Vector2(1353, 936)
+position = Vector2(254, 105)
+frame = 1
 input_action = "low_left"
 frame_num = 1
 
 [node name="DrumPad1" parent="." unique_id=622295038 instance=ExtResource("1_yubou")]
-position = Vector2(1163, 931)
+position = Vector2(74, 116)

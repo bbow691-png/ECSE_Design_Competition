@@ -1,10 +1,42 @@
 [gd_scene format=3 uid="uid://bne45u7wnoscd"]
 
 [ext_resource type="Script" uid="uid://bho2xyk4dpi6k" path="res://pause_menu.gd" id="1_hdmo1"]
+[ext_resource type="Texture2D" uid="uid://vswnxxec0dd5" path="res://assets/images/IMG_1009.PNG" id="2_nwcfo"]
+[ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="3_05uyy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nwcfo"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 0, 1)
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
 
 [node name="PauseMenu" type="CanvasLayer" unique_id=943736795]
+layer = 5
 follow_viewport_enabled = true
 script = ExtResource("1_hdmo1")
+
+[node name="CursorIcon" type="TextureRect" parent="." unique_id=409081059]
+z_index = 200
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -159.0
+offset_top = -148.0
+offset_right = 159.0
+offset_bottom = 148.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.5707964
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_nwcfo")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=844265515]
 anchors_preset = 15
@@ -12,14 +44,45 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=933471511]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 36
 
 [node name="ExitButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=26295141]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_hover_color = Color(0.9490196, 0.9490196, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 64
+theme_override_styles/focus = SubResource("StyleBoxFlat_nwcfo")
 text = "EXIT"
+flat = true
 
 [node name="ContinueButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1589614232]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_hover_color = Color(0.9490196, 0.9490196, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 64
+theme_override_styles/focus = SubResource("StyleBoxFlat_nwcfo")
 text = "CONTINUE"
+flat = true
+
+[node name="GameUI" parent="." unique_id=2092615904 instance=ExtResource("3_05uyy")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 617.0
+offset_top = 643.0
+offset_right = 1290.0
+offset_bottom = 866.0
+grow_horizontal = 1
+grow_vertical = 1
+input_enabled = true

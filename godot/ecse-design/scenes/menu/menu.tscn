@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://yuht10q6bf3w" path="res://scenes/menu/menu.gd" id="1_mcvr8"]
 [ext_resource type="Texture2D" uid="uid://b34fiwt65wmpl" path="res://assets/Spritesheets/Bamboo_bg.png" id="2_e0arn"]
 [ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="3_037ec"]
+[ext_resource type="Texture2D" uid="uid://vswnxxec0dd5" path="res://assets/images/IMG_1009.PNG" id="5_y1o0p"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ix81m"]
 shader = ExtResource("3_037ec")
@@ -98,3 +99,21 @@ color = Color(1, 1, 1, 0)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=558790325]
 z_index = 10
+
+[node name="CursorIcon" type="TextureRect" parent="." unique_id=1157248785]
+z_index = 200
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -426.0
+offset_top = -129.0
+offset_right = -108.0
+offset_bottom = 167.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.5707964
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_y1o0p")

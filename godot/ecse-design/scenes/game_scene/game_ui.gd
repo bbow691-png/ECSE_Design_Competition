@@ -24,6 +24,12 @@ extends Control
 @export var miss_window: float = 0.40       # Massively expanded to catch early "tip" hits
 @export var input_offset: float = 0.0       # Adjust if audio/visual lag occurs
 
+# --- SCENE GATING ---
+# Names of the scene(s) considered "the game scene" — note spawning, song
+# playback, and scoring only happen when the current scene's name matches
+# one of these. Compared against get_tree().current_scene.name.
+@export var game_scene_names: Array[String] = ["Game"]
+
 @onready var feedback_label: Label = $Feedback
 @onready var beat_placeholder: Sprite2D = $beat
 
@@ -33,6 +39,11 @@ var active_notes: Array[Sprite2D] = []
 # bounced independently instead of scaling the whole lane container.
 var pad_original_scale: Dictionary = {}
 var pads_by_index: Dictionary = {}
+
+# Set once in _ready() by checking the current scene's name against
+# game_scene_names. When false: no note spawning, no Conductor playback,
+# no scoring — but real button presses still bounce the pad.
+var is_in_game_scene: bool = false
 
 @export var PERFECT_SCORE:int = 500
 @export var GOOD_SCORE:int = 250
@@ -52,19 +63,18 @@ func _ready() -> void:
 	feedback_label.visible = false
 	beat_placeholder.visible = false
 
+	var current_scene := get_tree().current_scene
+	is_in_game_scene = current_scene != null and game_scene_names.has(current_scene.name)
+
+	if not is_in_game_scene:
+		# Not in the game scene: skip note spawning/song playback entirely.
+		# Pads still visually bounce on real input via _unhandled_input.
+		return
+
 	Conductor.note_spawned.connect(_on_song_manager_note_spawned)
-
-	# --- DEBUG: confirm each instance has a distinct lane_num ---
-	print("[%s] ready. lane_num=%d input_enabled=%s" % [name, lane_num, input_enabled])
-
-	Conductor.play_song("test_song")
 
 
 func _on_song_manager_note_spawned(pad_index: int, hit_time: float, boss: int) -> void:
-	# --- DEBUG: remove once confirmed ---
-	#print("[%s] signal received: pad_index=%d boss=%d | my lane_num=%d -> %s"
-		#% [name, pad_index, boss, lane_num, ("SPAWN" if boss == lane_num else "skip")])
-
 	if boss != lane_num:
 		return
 	if not pads_by_index.has(pad_index):
@@ -85,7 +95,7 @@ func spawn_beat(hit_time: float, drum: Sprite2D, pad_index: int) -> void:
 
 	note.global_position = start_pos
 	note.z_index = 100
-	note.frame_coords.x = pad_index-1
+	note.frame_coords.x = pad_index - 1
 
 	note.set_meta("spawn_time", Conductor.get_song_position())
 	note.set_meta("hit_time", hit_time)
@@ -96,7 +106,11 @@ func spawn_beat(hit_time: float, drum: Sprite2D, pad_index: int) -> void:
 
 	add_child(note)
 	active_notes.append(note)
+
 func _process(_delta: float) -> void:
+	if not is_in_game_scene:
+		return
+
 	var song_time: float = Conductor.get_song_position()
 
 	for i in range(active_notes.size() - 1, -1, -1):
@@ -147,20 +161,25 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if event.is_action_pressed("upp_left", false):
 		trigger_hit_effect(1)
-		evaluate_hit(1)
+		if is_in_game_scene:
+			evaluate_hit(1)
 	elif event.is_action_pressed("low_left", false):
 		trigger_hit_effect(2)
-		evaluate_hit(2)
+		if is_in_game_scene:
+			evaluate_hit(2)
 	elif event.is_action_pressed("low_righ", false):
 		trigger_hit_effect(3)
-		evaluate_hit(3)
+		if is_in_game_scene:
+			evaluate_hit(3)
 	elif event.is_action_pressed("upp_righ", false):
 		trigger_hit_effect(4)
-		evaluate_hit(4)
+		if is_in_game_scene:
+			evaluate_hit(4)
 
 func trigger_hit_effect(pad_index: int) -> void:
 	# Bounces only the pad sprite that was actually hit (dp1-dp4),
-	# instead of scaling the whole lane container.
+	# instead of scaling the whole lane container. Runs regardless of
+	# scene — pads should visually respond to input everywhere.
 	if not pads_by_index.has(pad_index):
 		return
 

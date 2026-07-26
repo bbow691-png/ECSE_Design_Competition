@@ -62,3 +62,9 @@ func commit_highscore() -> bool:
 	file.store_32(highscore)
 	file.close()
 	return true
+
+
+
+func _unhandled_input(event: InputEvent) -> void:
+		if event.is_action_pressed("esc", false):
+			get_tree().quit()

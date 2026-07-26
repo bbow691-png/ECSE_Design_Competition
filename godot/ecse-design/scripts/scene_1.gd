@@ -15,6 +15,7 @@ func _ready() -> void:
 	Score.reset_score()
 	Conductor.song_finished.connect(_on_song_finished)
 	end_screen_delay.timeout.connect(_on_end_screen_delay_timeout)
+	Conductor.play_song("test_song")
 
 	#Conductor.play_with_fade(level_music,bpm,fade_time)
 	pass

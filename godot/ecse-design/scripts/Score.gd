@@ -19,7 +19,7 @@ const JUDGEMENT_POINTS: Dictionary = {
 	"MISS!": 0,
 }
 
-var score: int = 0
+var score: int = 2500
 var highscore: int = 0
 
 
@@ -47,6 +47,10 @@ func _load_highscore() -> void:
 	highscore = file.get_32()
 	file.close()
 
+
+func add_score(add: int) -> void:
+	score += add
+	
 
 # Call once the song is over. Returns true if this run set a new
 # highscore (and persists it to disk immediately).

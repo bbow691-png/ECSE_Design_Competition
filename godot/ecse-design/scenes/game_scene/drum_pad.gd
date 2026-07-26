@@ -31,9 +31,6 @@ var active_notes: Array[Sprite2D] = []
 @export var GOOD_SCORE:int = 250
 @export var NEAR_SCORE:int = 100
 
-
-
-
 func _ready() -> void:
 	lane_index = int(name.substr(name.length() - 1, 1))
 	o_scale = scale

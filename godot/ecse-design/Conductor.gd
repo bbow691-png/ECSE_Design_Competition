@@ -17,11 +17,17 @@ var last_reported_playhead: float = 0.0
 var song_beat: int = 0
 var song_step: int = 0
 
+# --- Count-in buffer (lets song_position go negative before audio starts,
+# so early notes still get their full spawn_lead_time to travel) ---
+var is_buffering: bool = false
+var pending_song_name: String = ""
+var pending_bpm: float = 100.0
+var pending_fade_time: float = 1.0
+
 # --- Signals ---
 signal beat_hit(beat: int)
 signal step_hit(step: int)
 signal note_spawned(lane_index: int, hit_time: float, boss: int)
-<<<<<<< HEAD
 # Fires once when the currently loaded song's audio stops on its own —
 # i.e. active_player.playing goes true -> false while a song is still
 # considered "in progress" (is_playing). Pausing for game-over uses
@@ -30,9 +36,6 @@ signal note_spawned(lane_index: int, hit_time: float, boss: int)
 signal song_finished
 
 var _was_audio_playing: bool = false
-=======
-signal song_finished
->>>>>>> main
 
 # --- Dynamic Audio Players (crossfade system) ---
 var active_player: AudioStreamPlayer
@@ -43,7 +46,7 @@ var fade_tween: Tween
 var current_beatmap: Dictionary = {}
 var current_note_index: int = 0
 var is_playing: bool = false
-var spawn_lead_time: float = 2.5 # Seconds before hit time to spawn the note
+var spawn_lead_time: float = 4 # Seconds before hit time to spawn the note
 
 
 func _ready() -> void:
@@ -77,7 +80,7 @@ func get_song_position() -> float:
 func play_song(song_name: String, fade_time: float = 1.0) -> void:
 	var folder_path = "res://songs/" + song_name
 	var json_path = folder_path + "/beatmap.json"
-	
+
 	if not FileAccess.file_exists(json_path):
 		print("Beatmap not found at: ", json_path)
 		return
@@ -85,7 +88,7 @@ func play_song(song_name: String, fade_time: float = 1.0) -> void:
 	var file = FileAccess.open(json_path, FileAccess.READ)
 	var json_text = file.get_as_text()
 	file.close()
-	
+
 	var json = JSON.new()
 	var error = json.parse(json_text)
 	if error != OK:
@@ -95,15 +98,36 @@ func play_song(song_name: String, fade_time: float = 1.0) -> void:
 	var beatmap: Dictionary = json.get_data()
 	var song_bpm: float = beatmap.get("bpm", beatmap.get("tempo_bpm", bpm))
 
-	# Just pass the string now!
-	_play_stream_with_fade(song_name, song_bpm, fade_time, true)
-
 	current_beatmap = beatmap
 	current_note_index = 0
-	is_playing = true
+
+	# Figure out how much lead-in we need so the earliest note still gets
+	# its full spawn_lead_time to travel, instead of starting late/short.
+	var notes: Array = current_beatmap.get("notes", current_beatmap.get("beats", []))
+	var first_note_time: float = 0.0
+	if notes.size() > 0 and notes[0].has("time"):
+		first_note_time = notes[0]["time"]
+
+	var needed_buffer: float = max(0.0, spawn_lead_time - first_note_time)
+
+	map_bpm(song_bpm)
+
+	if needed_buffer <= 0.0:
+		# No buffer needed — behave exactly as before.
+		_play_stream_with_fade(song_name, song_bpm, fade_time, true)
+		is_playing = true
+	else:
+		# Start the count-in: notes can spawn, audio hasn't started yet.
+		pending_song_name = song_name
+		pending_bpm = song_bpm
+		pending_fade_time = fade_time
+		song_position = -needed_buffer
+		song_beat = 0
+		song_step = 0
+		is_buffering = true
+		is_playing = true
 
 	print("Loaded song: ", current_beatmap.get("source_file", current_beatmap.get("title", song_name)))
-
 
 func play_bgm(song_name: String, new_bpm: float = 100.0, fade_time: float = 1.0) -> void:
 	_play_stream_with_fade(song_name, new_bpm, fade_time, false)
@@ -192,10 +216,22 @@ func _play_stream_with_fade(song_name: String, new_bpm: float, fade_time: float 
 
 
 func _process(delta: float) -> void:
-	_process_beat_tracking()
+	if is_buffering:
+		_process_buffer_countdown(delta)
+	else:
+		_process_beat_tracking()
 	_process_note_spawning()
 	_process_song_end_detection()
 
+
+func _process_buffer_countdown(delta: float) -> void:
+	song_position += delta
+	_update_steps_and_beats()
+
+	if song_position >= 0.0:
+		is_buffering = false
+		_play_stream_with_fade(pending_song_name, pending_bpm, pending_fade_time, true)
+		is_playing = true   # _play_stream_with_fade() resets this to false internally — restore it
 
 func _process_beat_tracking() -> void:
 	if not active_player.playing:
@@ -246,7 +282,6 @@ func _process_note_spawning() -> void:
 			current_note_index += 1
 		else:
 			break
-<<<<<<< HEAD
 
 
 func _process_song_end_detection() -> void:
@@ -302,7 +337,7 @@ func load_and_play_song(song_folder_path: String, fade_time: float = 1.0) -> voi
 	# Route through the same crossfade system used by play_with_fade so only
 	# one song is ever audibly playing at a time (aside from the brief
 	# crossfade window).
-	play_with_fade(stream, song_bpm, fade_time, true)
+	Conductor.play_with_fade(stream, song_bpm, fade_time, true)
 
 	# Beatmap state is set up AFTER play_with_fade so it can't be wiped out
 	# by play_with_fade's own reset-on-call-without-beatmap safety above.
@@ -311,5 +346,3 @@ func load_and_play_song(song_folder_path: String, fade_time: float = 1.0) -> voi
 	is_playing = true
 
 	print("Loaded song: ", current_beatmap.get("source_file", current_beatmap.get("title", "Unknown")))
-=======
->>>>>>> main

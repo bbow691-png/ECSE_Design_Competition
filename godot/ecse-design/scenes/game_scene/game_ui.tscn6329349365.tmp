@@ -1,0 +1,139 @@
+[gd_scene format=3 uid="uid://ewc68dr5cv17"]
+
+[ext_resource type="Script" uid="uid://c14quy61myvuf" path="res://scenes/game_scene/game_ui.gd" id="1_seekm"]
+[ext_resource type="Texture2D" uid="uid://b0mj6lu8x3w7h" path="res://assets/images/IMG_1008.PNG" id="3_dnslt"]
+[ext_resource type="Script" uid="uid://o3bkkvm68vd7" path="res://scenes/game_scene/drum_pad.gd" id="4_v20na"]
+[ext_resource type="Texture2D" uid="uid://clj5vukng1tyu" path="res://assets/images/Arrows.png" id="5_v20na"]
+[ext_resource type="Texture2D" uid="uid://vswnxxec0dd5" path="res://assets/images/IMG_1009.PNG" id="5_vbgr5"]
+[ext_resource type="Texture2D" uid="uid://d2v65sejs050x" path="res://assets/images/IMG_1011.PNG" id="6_bqcs8"]
+[ext_resource type="Script" uid="uid://b0rc1vgkoq1gv" path="res://scenes/game_scene/drum_ad.gd" id="6_y85d6"]
+[ext_resource type="Texture2D" uid="uid://bw43cxlhb7nwm" path="res://assets/images/IMG_1010.PNG" id="8_onvsj"]
+
+[node name="GameUI" type="Control" unique_id=2092615904]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1320.0
+offset_bottom = -780.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_seekm")
+
+[node name="Up" type="Sprite2D" parent="." unique_id=1041106482]
+position = Vector2(116, 103)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_dnslt")
+script = ExtResource("4_v20na")
+
+[node name="Feedback" type="Label" parent="Up" unique_id=2079818166]
+z_index = 105
+offset_left = -156.0
+offset_top = -308.0
+offset_right = 147.0
+offset_bottom = -171.0
+theme_override_font_sizes/font_size = 100
+text = "Good"
+uppercase = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="Up" unique_id=1522811915]
+position = Vector2(-688.5, -310.5)
+scale = Vector2(0.3, 0.3)
+volume_db = 10.0
+max_polyphony = 4
+
+[node name="beat" type="Sprite2D" parent="Up" unique_id=1808911930]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_v20na")
+hframes = 4
+
+[node name="Right" type="Sprite2D" parent="." unique_id=233671122]
+position = Vector2(259, 105)
+rotation = 1.5707964
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_vbgr5")
+script = ExtResource("4_v20na")
+
+[node name="Feedback" type="Label" parent="Right" unique_id=1559263990]
+z_index = 105
+offset_left = -250.0
+offset_top = 148.0
+offset_right = 53.0
+offset_bottom = 285.0
+rotation = -1.5707964
+theme_override_font_sizes/font_size = 100
+text = "Good"
+uppercase = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="Right" unique_id=1874569671]
+position = Vector2(-688.5, -310.5)
+scale = Vector2(0.3, 0.3)
+volume_db = 10.0
+max_polyphony = 4
+
+[node name="beat" type="Sprite2D" parent="Right" unique_id=477634027]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_v20na")
+hframes = 4
+
+[node name="Down" type="Sprite2D" parent="." unique_id=606450402]
+position = Vector2(418, 101)
+rotation = 3.1415927
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("6_bqcs8")
+script = ExtResource("6_y85d6")
+
+[node name="Feedback" type="Label" parent="Down" unique_id=1553441417]
+z_index = 105
+offset_left = 136.00006
+offset_top = 270.0
+offset_right = 439.00006
+offset_bottom = 407.0
+rotation = 3.1415927
+theme_override_font_sizes/font_size = 100
+text = "Good"
+uppercase = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="Down" unique_id=689774621]
+position = Vector2(-688.5, -310.5)
+scale = Vector2(0.3, 0.3)
+volume_db = 10.0
+max_polyphony = 4
+
+[node name="beat" type="Sprite2D" parent="Down" unique_id=512516835]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_v20na")
+hframes = 4
+
+[node name="Left" type="Sprite2D" parent="." unique_id=1799861579]
+position = Vector2(573, 98)
+rotation = 4.712389
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("8_onvsj")
+script = ExtResource("6_y85d6")
+
+[node name="Feedback" type="Label" parent="Left" unique_id=988022113]
+z_index = 105
+offset_left = 256.0
+offset_top = -106.0
+offset_right = 559.0
+offset_bottom = 31.0
+rotation = -4.712389
+theme_override_font_sizes/font_size = 100
+text = "Good"
+uppercase = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="Left" unique_id=666708891]
+position = Vector2(-688.5, -310.5)
+scale = Vector2(0.3, 0.3)
+volume_db = 10.0
+max_polyphony = 4
+
+[node name="beat" type="Sprite2D" parent="Left" unique_id=1295165421]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_v20na")
+hframes = 4

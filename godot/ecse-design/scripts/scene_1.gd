@@ -34,25 +34,15 @@ func _process(_delta: float) -> void:
 	# FOREGROUND: Multiplied by 1.0 (gets the full energetic punch)
 	foreground.scale = base_scale + Vector2(zoom_pulse * 0.04, zoom_pulse * 0.04)
 
-
-func _on_song_finished() -> void:
-	SceneTransition.fade_to_scene(HIGHSCORE_SCENE)
-
-func _process(delta: float) -> void:
-	_time_accum += delta
-
-	if camera:
-		_apply_organic_pan(delta)
-
-func _apply_organic_pan(delta: float) -> void:
-	var t := _time_accum * pan_speed
-	
-	# Layering sine waves at different, irregular frequencies (e.g., 1.73, 2.14).
-	# This prevents the pattern from repeating too obviously and breaks the "circle".
-	var sway_x := sin(t) * 0.65 + sin(t * 1.73 + 1.0) * 0.35
-	var sway_y := cos(t * 0.85) * 0.65 + sin(t * 2.14 + 2.0) * 0.35
-	
-	var target_pos := camera_base_position + Vector2(sway_x * pan_amplitude_x, sway_y * pan_amplitude_y)
-	
-	# Apply the position smoothly
-	camera.global_position = camera.global_position.lerp(target_pos, delta * 3.0)
+#func _apply_organic_pan(delta: float) -> void:
+	#var t := _time_accum * pan_speed
+	#
+	## Layering sine waves at different, irregular frequencies (e.g., 1.73, 2.14).
+	## This prevents the pattern from repeating too obviously and breaks the "circle".
+	#var sway_x := sin(t) * 0.65 + sin(t * 1.73 + 1.0) * 0.35
+	#var sway_y := cos(t * 0.85) * 0.65 + sin(t * 2.14 + 2.0) * 0.35
+	#
+	#var target_pos := camera_base_position + Vector2(sway_x * pan_amplitude_x, sway_y * pan_amplitude_y)
+	#
+	## Apply the position smoothly
+	#camera.global_position = camera.global_position.lerp(target_pos, delta * 3.0)

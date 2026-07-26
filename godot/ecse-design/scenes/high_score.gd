@@ -21,7 +21,7 @@ func animate_score():
 	# 2. Start value (0)
 	# 3. End value (target_score)
 	# 4. Duration in seconds (2.0)
-	tween.tween_method(update_score_text, 0, Highscore.current_score, 2.0) \
+	tween.tween_method(update_score_text, 0, Score.score, 2.0) \
 		.set_trans(Tween.TRANS_QUART) \
 		.set_ease(Tween.EASE_OUT)
 

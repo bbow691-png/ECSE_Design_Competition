@@ -1,21 +1,31 @@
 [gd_scene format=3 uid="uid://b205bjmqdobp4"]
 
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="1_1kxst"]
-[ext_resource type="Script" uid="uid://bafl2ngchvha" path="res://scenes/game_scene/drum_pad_menu.gd" id="2_qfx02"]
+[ext_resource type="AudioStream" uid="uid://b48lkbvjxhxy8" path="res://assets/music/tom.wav" id="2_qfx02"]
 
 [node name="GameUI" unique_id=2092615904 instance=ExtResource("1_1kxst")]
+input_enabled = null
+lane_num = null
+scale_factor = null
+lane_index = null
+target_hit_offset = null
+perfect_window = null
+good_window = null
+near_window = null
+miss_window = null
+input_offset = null
+PERFECT_SCORE = null
+GOOD_SCORE = null
+NEAR_SCORE = null
 
-[node name="DrumPad3" parent="." index="0" unique_id=1222817773]
-script = ExtResource("2_qfx02")
-input_action = "upp_left"
+[node name="AudioStreamPlayer" parent="upp_left" parent_id_path=PackedInt32Array(1041106482) index="0" unique_id=1522811915]
+stream = ExtResource("2_qfx02")
 
-[node name="DrumPad4" parent="." index="1" unique_id=808055484]
-script = ExtResource("2_qfx02")
-input_action = "upp_left"
+[node name="AudioStreamPlayer" parent="low_left" parent_id_path=PackedInt32Array(233671122) index="0" unique_id=1874569671]
+stream = ExtResource("2_qfx02")
 
-[node name="DrumPad2" parent="." index="2" unique_id=877490846]
-script = ExtResource("2_qfx02")
-input_action = "upp_left"
+[node name="AudioStreamPlayer" parent="low_righ" parent_id_path=PackedInt32Array(606450402) index="0" unique_id=689774621]
+stream = ExtResource("2_qfx02")
 
-[node name="DrumPad1" parent="." index="3" unique_id=622295038]
-script = ExtResource("2_qfx02")
+[node name="AudioStreamPlayer" parent="upp_righ" parent_id_path=PackedInt32Array(1799861579) index="0" unique_id=666708891]
+stream = ExtResource("2_qfx02")

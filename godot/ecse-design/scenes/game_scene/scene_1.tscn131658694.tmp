@@ -72,29 +72,27 @@ follow_viewport_enabled = true
 
 [node name="Player" parent="Foreground" unique_id=1603383723 instance=ExtResource("4_3jmp3")]
 z_index = 14
-position = Vector2(490.00006, 626.00006)
-scale = Vector2(0.33486325, 0.3167969)
+position = Vector2(1390, 764)
+scale = Vector2(0.2, 0.2)
 
 [node name="Boss" parent="Foreground" unique_id=689069462 instance=ExtResource("7_ybqas")]
 z_index = 15
 offset_left = 129.0
 offset_top = 789.0
-offset_right = -1124.0
-offset_bottom = -62.0
-input_enabled = true
-lane_num = 1
-miss_window = 0.2
+offset_right = -1191.0
+offset_bottom = 9.0
 
 [node name="Player2" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
 z_index = 15
 offset_left = 1152.0
 offset_top = 761.0
-offset_right = -95.0
+offset_right = -168.0
 offset_bottom = -19.0
+input_enabled = true
+lane_num = 1
 
 [node name="FrogChar" parent="Foreground" unique_id=128235790 instance=ExtResource("5_52ejm")]
-position = Vector2(1416.0001, 625)
-scale = Vector2(0.302, 0.298)
+position = Vector2(481.00003, 666.00006)
+scale = Vector2(-0.302, 0.298)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=454243402]
-offset = Vector2(960, 540)

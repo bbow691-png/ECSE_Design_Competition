@@ -1,41 +1,108 @@
 [gd_scene format=3 uid="uid://ewc68dr5cv17"]
 
 [ext_resource type="Script" uid="uid://c14quy61myvuf" path="res://scenes/game_scene/game_ui.gd" id="1_seekm"]
-[ext_resource type="PackedScene" uid="uid://doapvkvqtqmb" path="res://scenes/game_scene/drum_pad.tscn" id="1_yubou"]
+[ext_resource type="AudioStream" uid="uid://b48lkbvjxhxy8" path="res://assets/music/tom.wav" id="2_ul61k"]
+[ext_resource type="Texture2D" uid="uid://b0mj6lu8x3w7h" path="res://assets/images/IMG_1008.PNG" id="3_dnslt"]
+[ext_resource type="Texture2D" uid="uid://clj5vukng1tyu" path="res://assets/images/Arrows.png" id="5_v20na"]
+[ext_resource type="Texture2D" uid="uid://vswnxxec0dd5" path="res://assets/images/IMG_1009.PNG" id="5_vbgr5"]
+[ext_resource type="Texture2D" uid="uid://d2v65sejs050x" path="res://assets/images/IMG_1011.PNG" id="6_bqcs8"]
+[ext_resource type="Texture2D" uid="uid://bw43cxlhb7nwm" path="res://assets/images/IMG_1010.PNG" id="8_onvsj"]
 
 [node name="GameUI" type="Control" unique_id=2092615904]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -1320.0
+offset_right = -1233.0
 offset_bottom = -780.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_seekm")
+spawn_distance = 1000.0
 
-[node name="DrumPad3" parent="." unique_id=1222817773 instance=ExtResource("1_yubou")]
-position = Vector2(441, 109)
-frame = 2
-input_action = "low_righ"
-good_window = 0.1
-near_window = 0.15
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1522811915]
+position = Vector2(-228.25, -52.25)
+scale = Vector2(0.15, 0.15)
+stream = ExtResource("2_ul61k")
+volume_db = 10.0
+max_polyphony = 4
 
-[node name="DrumPad4" parent="." unique_id=808055484 instance=ExtResource("1_yubou")]
-position = Vector2(596, 94)
-frame = 3
-input_action = "upp_righ"
-good_window = 0.1
-near_window = 0.15
+[node name="beat" type="Sprite2D" parent="." unique_id=1295165421]
+visible = false
+position = Vector2(573, 98)
+rotation = -1.5707964
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_v20na")
+hframes = 4
 
-[node name="DrumPad2" parent="." unique_id=877490846 instance=ExtResource("1_yubou")]
-position = Vector2(254, 105)
-frame = 1
-input_action = "low_left"
-good_window = 0.1
-near_window = 0.15
+[node name="Feedback" type="Label" parent="." unique_id=988022113]
+visible = false
+z_index = 105
+layout_mode = 0
+offset_left = 520.0
+offset_top = -30.0
+offset_right = 783.0
+offset_bottom = 85.0
+scale = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 100
+text = "Good"
+uppercase = true
 
-[node name="DrumPad1" parent="." unique_id=622295038 instance=ExtResource("1_yubou")]
-position = Vector2(74, 116)
-good_window = 0.1
-near_window = 0.15
+[node name="upp_left" type="Sprite2D" parent="." unique_id=1041106482]
+position = Vector2(116, 103)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_dnslt")
+
+[node name="beat" type="Sprite2D" parent="upp_left" unique_id=1808911930]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_v20na")
+hframes = 4
+
+[node name="low_left" type="Sprite2D" parent="." unique_id=233671122]
+position = Vector2(259, 105)
+rotation = 1.5707964
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_vbgr5")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="low_left" unique_id=1874569671]
+position = Vector2(-688.5, -310.5)
+scale = Vector2(0.3, 0.3)
+volume_db = 10.0
+max_polyphony = 4
+
+[node name="beat" type="Sprite2D" parent="low_left" unique_id=477634027]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_v20na")
+hframes = 4
+
+[node name="low_righ" type="Sprite2D" parent="." unique_id=606450402]
+position = Vector2(418, 101)
+rotation = 3.1415927
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("6_bqcs8")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="low_righ" unique_id=689774621]
+position = Vector2(-688.5, -310.5)
+scale = Vector2(0.3, 0.3)
+volume_db = 10.0
+max_polyphony = 4
+
+[node name="beat" type="Sprite2D" parent="low_righ" unique_id=512516835]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_v20na")
+hframes = 4
+
+[node name="upp_righ" type="Sprite2D" parent="." unique_id=1799861579]
+position = Vector2(573, 98)
+rotation = 4.712389
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("8_onvsj")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="upp_righ" unique_id=666708891]
+position = Vector2(-688.5, -310.5)
+scale = Vector2(0.3, 0.3)
+volume_db = 10.0
+max_polyphony = 4

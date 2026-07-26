@@ -11,10 +11,10 @@ const UDP_PORT := 5005
 # Which physical piezo channel maps to which InputMap action. Adjust to match
 # how the piezos are actually wired/placed on the cabinet.
 const CHANNEL_TO_ACTION := {
-	1: "upp_left",
-	2: "upp_righ",
+	1: "upp_righ",
+	2: "low_righ", 
 	3: "low_left",
-	4: "low_righ",
+	4: "upp_left", 
 }
 
 var _socket := PacketPeerUDP.new()

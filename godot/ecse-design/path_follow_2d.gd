@@ -5,7 +5,7 @@ extends PathFollow2D
 @export var squash_amount: float = 0.2 
 @export var stops: Array[float] = [0.0, 0.4, 1.0] # The 3 set points on the path
 const first_game: String = "res://scenes/game_scene/scene_1.tscn"
-const second_game: String = "res://scenes/game_scene/scene_1.tscn"
+const second_game: String = "res://scenes/scene_2.tscn"
 var current_scene: String = ""
 var current_stop_index: int = 0
 var is_walking: bool = false

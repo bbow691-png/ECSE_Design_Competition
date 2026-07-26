@@ -1,0 +1,535 @@
+{
+  "source_file": "Koji Kondo - Chuu Boss (MoodyRPG) [Normal].osu",
+  "title": "Chuu Boss",
+  "difficulty": "Normal",
+  "tempo_bpm": 151.4,
+  "pads": 4,
+  "note_count": 105,
+  "notes": [
+    {
+      "time": 6.173,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 6.371,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 6.965,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 7.758,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 7.956,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 8.55,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 9.343,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 9.541,
+      "pad": 3,
+      "boss": 0
+    },
+    {
+      "time": 10.136,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 10.928,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 11.126,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 11.721,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 12.712,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 13.108,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 13.702,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 13.901,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 14.495,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 15.089,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 15.882,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 16.278,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 16.873,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 17.071,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 19.052,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 19.449,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 20.043,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 20.241,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 20.836,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 21.43,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 22.223,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 22.619,
+      "pad": 3,
+      "boss": 0
+    },
+    {
+      "time": 23.214,
+      "pad": 3,
+      "boss": 0
+    },
+    {
+      "time": 23.808,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 24.204,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 24.403,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 25.393,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 25.79,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 26.384,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 26.582,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 27.177,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 27.375,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 27.771,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 28.564,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 28.96,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 29.554,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 29.753,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 31.734,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 32.13,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 32.725,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 32.923,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 33.517,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 33.716,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 34.112,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 34.904,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 35.301,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 35.697,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 35.895,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 36.49,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 36.886,
+      "pad": 1,
+      "boss": 0
+    },
+    {
+      "time": 37.084,
+      "pad": 1,
+      "boss": 0
+    },
+    {
+      "time": 37.679,
+      "pad": 1,
+      "boss": 0
+    },
+    {
+      "time": 38.273,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 38.471,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 38.867,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 39.264,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 39.858,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 40.849,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 41.443,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 41.642,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 42.038,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 42.434,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 43.029,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 44.019,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 44.614,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 44.812,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 45.208,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 45.605,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 46.199,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 47.19,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 47.784,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 48.379,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 48.775,
+      "pad": 3,
+      "boss": 0
+    },
+    {
+      "time": 49.171,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 49.369,
+      "pad": 4,
+      "boss": 0
+    },
+    {
+      "time": 50.757,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 51.153,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 51.747,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 51.945,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 52.54,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 53.134,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 53.927,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 54.323,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 54.918,
+      "pad": 2,
+      "boss": 1
+    },
+    {
+      "time": 55.116,
+      "pad": 1,
+      "boss": 1
+    },
+    {
+      "time": 57.097,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 57.494,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 58.088,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 58.286,
+      "pad": 4,
+      "boss": 1
+    },
+    {
+      "time": 58.881,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 59.475,
+      "pad": 3,
+      "boss": 1
+    },
+    {
+      "time": 60.268,
+      "pad": 1,
+      "boss": 0
+    },
+    {
+      "time": 60.664,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 61.259,
+      "pad": 2,
+      "boss": 0
+    },
+    {
+      "time": 61.853,
+      "pad": 3,
+      "boss": 0
+    },
+    {
+      "time": 62.249,
+      "pad": 3,
+      "boss": 0
+    },
+    {
+      "time": 62.447,
+      "pad": 3,
+      "boss": 0
+    }
+  ]
+}

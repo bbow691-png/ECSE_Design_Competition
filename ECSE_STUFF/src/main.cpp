@@ -28,7 +28,7 @@
 
 //------------------------------Piezo Config-----------------------------------//
 #define STRIKE_THRESHOLD    500  //ADC value to trigger a hit (0-4095)
-#define DEBOUNCE_MS         50   //Per-channel: minimum time between strikes on the same pad (ms)
+#define DEBOUNCE_MS         150   //Per-channel: minimum time between strikes on the same pad (ms)
 #define HOLD_MS             20   //Per-channel: how long to hold triggered state (ms)
 //A real strike's vibration reaches neighbouring piezos within ~1ms and can
 //cross their threshold too. Once any channel fires, ignore ALL channels for

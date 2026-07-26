@@ -82,10 +82,10 @@ offset_left = 129.0
 offset_top = 789.0
 offset_right = -1124.0
 offset_bottom = -62.0
+game_scene_names = Array[String](["Scene1"])
 input_enabled = true
 lane_num = 1
 miss_window = 0.2
-game_scene_names = Array[String](["Scene1"])
 
 [node name="Player2" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
 z_index = 15

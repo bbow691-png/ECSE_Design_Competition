@@ -5,6 +5,7 @@ import socket
 import re
 import threading
 import time
+import keyboard
 
 PORT = "COM9" # MAKE SURE TO MATCH THIS TO THE PORT YOUR ESP IS CONNECTED TO
 BAUD = 921600
@@ -44,6 +45,14 @@ def read_hits(ser, sock, stop_event):
                 channel = match.group(1).decode()
                 sock.sendto(channel.encode(), (UDP_IP, UDP_PORT))
                 print(f"Hit: Piezo {channel}")
+                hit_key(int(channel))
+
+def hit_key(channel):
+    # left to right drum pad order
+    keymap = ['a', 's', 'l', ';']
+    keymap.reverse() # reverse to match pin order on pcbd
+    keyboard.press_and_release(keymap[channel-1])
+            
 
 
 def stream_loopback(ser):

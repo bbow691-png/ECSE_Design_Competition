@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
 [ext_resource type="Script" uid="uid://cqkjsvl1uypjx" path="res://scenes/game_scene/health_bar.gd" id="8_hlthb"]
+[ext_resource type="PackedScene" uid="uid://bne45u7wnoscd" path="res://pause_menu.tscn" id="9_at80i"]
 [ext_resource type="PackedScene" path="res://scenes/game_scene/end_screen.tscn" id="9_endscr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_c18ma"]
@@ -100,3 +101,6 @@ scale = Vector2(0.302, 0.298)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=454243402]
 offset = Vector2(960, 540)
+
+[node name="PauseMenu" parent="." unique_id=943736795 instance=ExtResource("9_at80i")]
+visible = false

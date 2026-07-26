@@ -52,8 +52,10 @@ var spawn_lead_time: float = 4 # Seconds before hit time to spawn the note
 func _ready() -> void:
 	active_player = AudioStreamPlayer.new()
 	fading_player = AudioStreamPlayer.new()
+	menu_music_player = AudioStreamPlayer.new()
 	add_child(active_player)
 	add_child(fading_player)
+	add_child(menu_music_player)
 	active_player.finished.connect(func(): 
 			if is_playing: 
 				is_playing = false
@@ -131,7 +133,10 @@ func play_song(song_name: String, fade_time: float = 1.0) -> void:
 
 func play_bgm(song_name: String, new_bpm: float = 100.0, fade_time: float = 1.0) -> void:
 	_play_stream_with_fade(song_name, new_bpm, fade_time, false)
-
+# --- Pause / Menu Music ---
+@export var menu_music_song: String = "mainmenu"  # folder name under res://songs/
+var is_menu_paused: bool = false
+var menu_music_player: AudioStreamPlayer
 
 # --------------------------------------------------------------------
 # INTERNAL AUDIO LOGIC
@@ -299,6 +304,40 @@ func pause_song() -> void:
 	if active_player:
 		active_player.stream_paused = true
 
+# Called by the Esc pause menu: freezes gameplay song + note spawning
+# (same effect as pause_song) and additionally starts menu music, since
+# this pause is player-initiated rather than a death/game-over pause.
+func pause_for_menu() -> void:
+	if is_menu_paused:
+		return
+	is_menu_paused = true
+	is_playing = false
+
+	if active_player and active_player.playing:
+		active_player.stream_paused = true
+
+	var menu_stream = _load_audio(menu_music_song)
+	if menu_stream:
+		menu_music_player.stream = menu_stream
+		menu_music_player.volume_db = 0.0
+		menu_music_player.play()
+	else:
+		print("Menu music not found for: ", menu_music_song)
+
+
+# Reverses pause_for_menu(): stops menu music and unfreezes the game song
+# from exactly where it left off.
+func resume_from_menu() -> void:
+	if not is_menu_paused:
+		return
+	is_menu_paused = false
+
+	menu_music_player.stop()
+
+	if active_player:
+		active_player.stream_paused = false
+
+	is_playing = true
 
 func load_and_play_song(song_folder_path: String, fade_time: float = 1.0) -> void:
 	var json_path = song_folder_path + "/beatmap.json"

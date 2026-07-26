@@ -6,7 +6,7 @@ import re
 import threading
 import time
 
-PORT = "COM3"
+PORT = "COM5"
 BAUD = 921600
 SAMPLE_RATE = 22050
 CHUNK_SIZE = 256

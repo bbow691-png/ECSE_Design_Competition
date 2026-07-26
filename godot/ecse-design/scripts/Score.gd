@@ -19,7 +19,7 @@ const JUDGEMENT_POINTS: Dictionary = {
 	"MISS!": 0,
 }
 
-var score: int = 2500
+var score: int = 0
 var highscore: int = 0
 
 

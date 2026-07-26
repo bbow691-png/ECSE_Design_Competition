@@ -11,11 +11,11 @@ var zoom_pulse: float = 0.0
 
 func _ready() -> void:
 	# Connect to your sound node's signal
-	Health.reset_health()
+	#Health.reset_health()
 	Score.reset_score()
 	Conductor.song_finished.connect(_on_song_finished)
 	end_screen_delay.timeout.connect(_on_end_screen_delay_timeout)
-	Conductor.play_song("terraria",.5)
+	Conductor.play_song("staffroll",.5)
 
 	#Conductor.play_with_fade(level_music,bpm,fade_time)
 	pass

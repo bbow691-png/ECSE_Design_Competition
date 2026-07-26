@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="4_3jmp3"]
 [ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="4_dyg8e"]
 [ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
+[ext_resource type="Script" uid="uid://s18ohmuywuf7" path="res://scenes/game_scene/score.gd" id="5_at80i"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
-[ext_resource type="Script" uid="uid://cqkjsvl1uypjx" path="res://scenes/game_scene/health_bar.gd" id="8_hlthb"]
 [ext_resource type="PackedScene" uid="uid://bne45u7wnoscd" path="res://pause_menu.tscn" id="9_at80i"]
 [ext_resource type="PackedScene" path="res://scenes/game_scene/end_screen.tscn" id="9_endscr"]
 
@@ -50,19 +50,25 @@ grow_vertical = 2
 layer = 5
 follow_viewport_enabled = true
 
-[node name="HealthBar" type="ProgressBar" parent="UI" unique_id=1755646557]
-anchors_preset = -1
-anchor_left = 0.3
-anchor_right = 0.7
-offset_top = 24.0
-offset_bottom = 64.0
-grow_horizontal = 2
-value = 50.0
-show_percentage = false
-script = ExtResource("8_hlthb")
-
 [node name="EndScreen" parent="UI" unique_id=1906198017 instance=ExtResource("9_endscr")]
 layout_mode = 3
+
+[node name="Score" type="Label" parent="UI" unique_id=860970447]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -27.0
+offset_top = 44.0
+offset_right = 31.0
+offset_bottom = 82.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 64
+text = "0"
+script = ExtResource("5_at80i")
 
 [node name="EndScreenDelay" type="Timer" parent="." unique_id=812889363]
 one_shot = true

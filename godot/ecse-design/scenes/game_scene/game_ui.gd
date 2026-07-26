@@ -146,7 +146,7 @@ func _process(_delta: float) -> void:
 			# non-input boss/decoration row also "misses" every note it
 			# never hits, and that's expected, not a player failure.
 			if input_enabled:
-				Health.apply_judgement("MISS!")
+				#Health.apply_judgement("MISS!")
 				Score.add_judgement("MISS!")
 			active_notes.remove_at(i)
 			note.queue_free()

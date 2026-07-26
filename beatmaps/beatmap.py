@@ -137,7 +137,7 @@ def assign_boss_sections(notes, bpm, difficulty_name, section_beats, ratio_overr
     elif "easy" in difficulty_name.lower():
         boss_ratio, player_ratio = (1.0, 1.0)
     else:
-        boss_ratio, player_ratio = (1.0, 3.0)
+        boss_ratio, player_ratio = (3.0, 1.0)
 
     beat_length_sec = 60.0 / bpm
     boss_len = section_beats * beat_length_sec * boss_ratio

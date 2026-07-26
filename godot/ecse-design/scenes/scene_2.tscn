@@ -1,0 +1,105 @@
+[gd_scene format=3 uid="uid://bpe8py6k4mhna"]
+
+[ext_resource type="Texture2D" uid="uid://b34fiwt65wmpl" path="res://assets/Spritesheets/Bamboo_bg.png" id="1_is556"]
+[ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="2_ul8a6"]
+[ext_resource type="PackedScene" path="res://scenes/game_scene/end_screen.tscn" id="3_41217"]
+[ext_resource type="Script" uid="uid://s18ohmuywuf7" path="res://scenes/game_scene/score.gd" id="4_nb8vq"]
+[ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="5_a3h35"]
+[ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="6_8egj7"]
+[ext_resource type="PackedScene" uid="uid://bne45u7wnoscd" path="res://pause_menu.tscn" id="8_nbtma"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vlvxn"]
+shader = ExtResource("2_ul8a6")
+shader_parameter/blur_amount = 2.5
+
+[node name="scene_2" type="Node2D" unique_id=1996969298]
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=605360677]
+follow_viewport_enabled = true
+
+[node name="Background" type="TextureRect" parent="Background" unique_id=584247237]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_is556")
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="Background/Background" unique_id=478564551]
+position = Vector2(974.49994, 560)
+scale = Vector2(10.155001, 5.71)
+copy_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Background/Background/BackBufferCopy" unique_id=758909984]
+visible = false
+material = SubResource("ShaderMaterial_vlvxn")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1845397432]
+layer = 5
+follow_viewport_enabled = true
+
+[node name="EndScreen" parent="UI" unique_id=226242960 instance=ExtResource("3_41217")]
+layout_mode = 3
+
+[node name="Score" type="Label" parent="UI" unique_id=1731603402]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -27.0
+offset_top = 44.0
+offset_right = 31.0
+offset_bottom = 82.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 64
+text = "0"
+script = ExtResource("4_nb8vq")
+
+[node name="EndScreenDelay" type="Timer" parent="." unique_id=1958723740]
+one_shot = true
+
+[node name="Foreground" type="CanvasLayer" parent="." unique_id=540047747]
+layer = 3
+follow_viewport_enabled = true
+
+[node name="Player" parent="Foreground" unique_id=1603383723 instance=ExtResource("5_a3h35")]
+z_index = 14
+position = Vector2(490.00006, 626.00006)
+scale = Vector2(0.33486325, 0.3167969)
+
+[node name="Boss" parent="Foreground" unique_id=2092615904 instance=ExtResource("6_8egj7")]
+z_index = 15
+offset_left = 129.0
+offset_top = 789.0
+offset_right = -1124.0
+offset_bottom = -62.0
+input_enabled = true
+lane_num = 1
+miss_window = 0.2
+game_scene_names = Array[String](["Scene1"])
+
+[node name="Player2" parent="Foreground" unique_id=2060493555 instance=ExtResource("6_8egj7")]
+z_index = 15
+offset_left = 1152.0
+offset_top = 761.0
+offset_right = -95.0
+offset_bottom = -19.0
+game_scene_names = Array[String](["Scene1"])
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=933670157]
+offset = Vector2(960, 540)
+
+[node name="PauseMenu" parent="." unique_id=943736795 instance=ExtResource("8_nbtma")]
+visible = false

@@ -1,0 +1,112 @@
+[gd_scene format=3 uid="uid://chkj2w7ppx8pc"]
+
+[ext_resource type="Script" uid="uid://cd2qonc5otexv" path="res://scripts/scene_1.gd" id="1_d7a6c"]
+[ext_resource type="Texture2D" uid="uid://l0k204jpr7rc" path="res://assets/Spritesheets/Swamp_bg.png" id="3_52ejm"]
+[ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="4_3jmp3"]
+[ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="4_dyg8e"]
+[ext_resource type="PackedScene" uid="uid://dtfhytn7tlijr" path="res://scenes/game_scene/frog_char.tscn" id="5_52ejm"]
+[ext_resource type="Script" uid="uid://s18ohmuywuf7" path="res://scenes/game_scene/score.gd" id="5_at80i"]
+[ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
+[ext_resource type="PackedScene" uid="uid://bne45u7wnoscd" path="res://pause_menu.tscn" id="9_at80i"]
+[ext_resource type="PackedScene" path="res://scenes/game_scene/end_screen.tscn" id="9_endscr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c18ma"]
+shader = ExtResource("4_dyg8e")
+shader_parameter/blur_amount = 2.5
+
+[node name="Scene1" type="Node2D" unique_id=1132201814]
+script = ExtResource("1_d7a6c")
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=1854626790]
+follow_viewport_enabled = true
+
+[node name="Background" type="TextureRect" parent="Background" unique_id=1745690911]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_52ejm")
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="Background/Background" unique_id=1484624341]
+position = Vector2(974.49994, 560)
+scale = Vector2(10.155001, 5.71)
+copy_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Background/Background/BackBufferCopy" unique_id=1535292703]
+visible = false
+material = SubResource("ShaderMaterial_c18ma")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=304241399]
+layer = 5
+follow_viewport_enabled = true
+
+[node name="EndScreen" parent="UI" unique_id=1906198017 instance=ExtResource("9_endscr")]
+layout_mode = 3
+
+[node name="Score" type="Label" parent="UI" unique_id=860970447]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -27.0
+offset_top = 44.0
+offset_right = 31.0
+offset_bottom = 82.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 64
+text = "0"
+script = ExtResource("5_at80i")
+
+[node name="EndScreenDelay" type="Timer" parent="." unique_id=812889363]
+one_shot = true
+
+[node name="Foreground" type="CanvasLayer" parent="." unique_id=998582307]
+layer = 3
+follow_viewport_enabled = true
+
+[node name="Player" parent="Foreground" unique_id=1603383723 instance=ExtResource("4_3jmp3")]
+z_index = 14
+position = Vector2(490.00006, 626.00006)
+scale = Vector2(0.33486325, 0.3167969)
+
+[node name="Boss" parent="Foreground" unique_id=689069462 instance=ExtResource("7_ybqas")]
+z_index = 15
+offset_left = 129.0
+offset_top = 789.0
+offset_right = -1124.0
+offset_bottom = -62.0
+input_enabled = true
+lane_num = 1
+miss_window = 0.2
+game_scene_names = Array[String](["Scene1"])
+
+[node name="Player2" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
+z_index = 15
+offset_left = 1152.0
+offset_top = 761.0
+offset_right = -95.0
+offset_bottom = -19.0
+game_scene_names = Array[String](["Scene1"])
+
+[node name="FrogChar" parent="Foreground" unique_id=128235790 instance=ExtResource("5_52ejm")]
+position = Vector2(1416.0001, 625)
+scale = Vector2(0.302, 0.298)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=454243402]
+offset = Vector2(960, 540)
+
+[node name="PauseMenu" parent="." unique_id=943736795 instance=ExtResource("9_at80i")]
+visible = false

@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://b34fiwt65wmpl" path="res://assets/Spritesheets/Bamboo_bg.png" id="1_is556"]
 [ext_resource type="Script" uid="uid://cxgfws20vq8ca" path="res://scenes/scene_2.gd" id="1_nb8vq"]
 [ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="2_ul8a6"]
-[ext_resource type="PackedScene" path="res://scenes/game_scene/end_screen.tscn" id="3_41217"]
+[ext_resource type="PackedScene" uid="uid://dn84ckyckb6fh" path="res://scenes/game_scene/end_screen.tscn" id="3_41217"]
 [ext_resource type="Script" uid="uid://s18ohmuywuf7" path="res://scenes/game_scene/score.gd" id="4_nb8vq"]
 [ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="5_a3h35"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="6_8egj7"]
@@ -214,7 +214,23 @@ layer = 5
 follow_viewport_enabled = true
 
 [node name="EndScreen" parent="UI" unique_id=226242960 instance=ExtResource("3_41217")]
-layout_mode = 3
+visible = false
+
+[node name="Timer" type="Label" parent="UI/EndScreen" unique_id=1702877273]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -30.0
+offset_top = -75.0
+offset_right = 30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 64
+text = "15"
+horizontal_alignment = 1
 
 [node name="Score" type="Label" parent="UI" unique_id=1731603402]
 anchors_preset = 5

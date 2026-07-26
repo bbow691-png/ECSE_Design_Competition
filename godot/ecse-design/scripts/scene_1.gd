@@ -4,30 +4,22 @@ extends Node2D
 @onready var foreground = $Foreground
 @onready var end_screen = $UI/EndScreen
 @onready var end_screen_delay: Timer = $EndScreenDelay
+@onready var timer_label: Label = $UI/EndScreen/Timer 
+
 # The target base scale for both layers
 var base_scale: Vector2 = Vector2(1.0, 1.0)
 # A modifier variable that tweens back to 0
 var zoom_pulse: float = 0.0
 
+var label_bounce_tween: Tween
+
 func _ready() -> void:
-	# Connect to your sound node's signal
-	#Health.reset_health()
 	Score.reset_score()
 	Conductor.song_finished.connect(_on_song_finished)
 	end_screen_delay.timeout.connect(_on_end_screen_delay_timeout)
-	Conductor.play_song("staffroll",.5)
+	Conductor.play_song("staffroll", 0.5)
 
-	#Conductor.play_with_fade(level_music,bpm,fade_time)
-	pass
 
-func _on_song_finished() -> void:
-	end_screen_delay.start()
-
-func _on_end_screen_delay_timeout() -> void:
-	var is_new_high: bool = Score.commit_highscore()
-	end_screen.show_results(Score.score, Score.highscore, is_new_high)
-	
-	
 func _process(_delta: float) -> void:
 	# BACKGROUND: Multiplied by 0.3 (moves/zooms very subtly)
 	background.scale = base_scale + Vector2(zoom_pulse * 0.01, zoom_pulse * 0.01)
@@ -35,15 +27,42 @@ func _process(_delta: float) -> void:
 	# FOREGROUND: Multiplied by 1.0 (gets the full energetic punch)
 	foreground.scale = base_scale + Vector2(zoom_pulse * 0.04, zoom_pulse * 0.04)
 
-#func _apply_organic_pan(delta: float) -> void:
-	#var t := _time_accum * pan_speed
-	#
-	## Layering sine waves at different, irregular frequencies (e.g., 1.73, 2.14).
-	## This prevents the pattern from repeating too obviously and breaks the "circle".
-	#var sway_x := sin(t) * 0.65 + sin(t * 1.73 + 1.0) * 0.35
-	#var sway_y := cos(t * 0.85) * 0.65 + sin(t * 2.14 + 2.0) * 0.35
-	#
-	#var target_pos := camera_base_position + Vector2(sway_x * pan_amplitude_x, sway_y * pan_amplitude_y)
-	#
-	## Apply the position smoothly
-	#camera.global_position = camera.global_position.lerp(target_pos, delta * 3.0)
+
+func _on_song_finished() -> void:
+	end_screen_delay.start()
+
+
+func _on_end_screen_delay_timeout() -> void:
+	var is_new_high: bool = Score.commit_highscore()
+	end_screen.show_results(Score.score, Score.highscore, is_new_high)
+	
+	# Countdown from 15 down to 1 second
+	for time_left in range(15, 0, -1):
+		update_countdown(time_left)
+		await get_tree().create_timer(1.0).timeout    
+	
+	# Transition back to the main menu
+	SceneTransition.fade_to_scene("res://scenes/game_scene/walk_around.tscn")
+
+
+func update_countdown(seconds_left: int) -> void:
+	if not timer_label:
+		return
+
+	# Update text
+	timer_label.text = "Returning in " + str(seconds_left) + "s..."
+	
+	# Set pivot to the center of the text so it pops from the center
+	timer_label.pivot_offset = timer_label.size / 2.0
+
+	# Cancel active bounce tween if it's still running
+	if label_bounce_tween and label_bounce_tween.is_running():
+		label_bounce_tween.kill()
+
+	# Pop the label up to 1.25x scale instantly, then bounce back down
+	timer_label.scale = Vector2(1.25, 1.25)
+	
+	label_bounce_tween = create_tween()
+	label_bounce_tween.tween_property(timer_label, "scale", Vector2.ONE, 0.35)\
+		.set_trans(Tween.TRANS_BACK)\
+		.set_ease(Tween.EASE_OUT)

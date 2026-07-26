@@ -1,9 +1,9 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dn84ckyckb6fh"]
 
-[ext_resource type="Script" path="res://scenes/game_scene/end_screen.gd" id="1_endscr"]
+[ext_resource type="Script" uid="uid://dnj5q1n1rvhg8" path="res://scenes/game_scene/end_screen.gd" id="1_endscr"]
 
-[node name="EndScreen" type="Control"]
-visible = false
+[node name="EndScreen" type="Control" unique_id=90802323]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,42 +11,47 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_endscr")
 
-[node name="Backdrop" type="ColorRect" parent="."]
-anchors_preset = 15
+[node name="Backdrop" type="ColorRect" parent="." unique_id=797570100]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.75)
 
-[node name="Center" type="CenterContainer" parent="."]
-anchors_preset = 15
+[node name="Center" type="CenterContainer" parent="." unique_id=1579966699]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="Center"]
+[node name="VBox" type="VBoxContainer" parent="Center" unique_id=1523859293]
+layout_mode = 2
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="Center/VBox"]
+[node name="TitleLabel" type="Label" parent="Center/VBox" unique_id=1999415772]
+layout_mode = 2
 theme_override_font_sizes/font_size = 64
 text = "SONG COMPLETE"
 horizontal_alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="Center/VBox"]
+[node name="ScoreLabel" type="Label" parent="Center/VBox" unique_id=746370977]
+layout_mode = 2
 theme_override_font_sizes/font_size = 36
 text = "Score: 0"
 horizontal_alignment = 1
 
-[node name="BestLabel" type="Label" parent="Center/VBox"]
+[node name="BestLabel" type="Label" parent="Center/VBox" unique_id=2083017188]
+layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Best: 0"
 horizontal_alignment = 1
 
-[node name="NewHighLabel" type="Label" parent="Center/VBox"]
+[node name="NewHighLabel" type="Label" parent="Center/VBox" unique_id=2128566673]
 visible = false
 modulate = Color(1, 0.85, 0.2, 1)
+layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "NEW HIGH SCORE!"
 horizontal_alignment = 1

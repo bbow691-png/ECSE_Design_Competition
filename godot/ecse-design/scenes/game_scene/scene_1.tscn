@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://s18ohmuywuf7" path="res://scenes/game_scene/score.gd" id="5_at80i"]
 [ext_resource type="PackedScene" uid="uid://ewc68dr5cv17" path="res://scenes/game_scene/game_ui.tscn" id="7_ybqas"]
 [ext_resource type="PackedScene" uid="uid://bne45u7wnoscd" path="res://pause_menu.tscn" id="9_at80i"]
-[ext_resource type="PackedScene" path="res://scenes/game_scene/end_screen.tscn" id="9_endscr"]
+[ext_resource type="PackedScene" uid="uid://dn84ckyckb6fh" path="res://scenes/game_scene/end_screen.tscn" id="9_endscr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_c18ma"]
 shader = ExtResource("4_dyg8e")
@@ -51,7 +51,22 @@ layer = 5
 follow_viewport_enabled = true
 
 [node name="EndScreen" parent="UI" unique_id=1906198017 instance=ExtResource("9_endscr")]
-layout_mode = 3
+
+[node name="Timer" type="Label" parent="UI/EndScreen" unique_id=1281558084]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -30.0
+offset_top = -75.0
+offset_right = 30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 64
+text = "15"
+horizontal_alignment = 1
 
 [node name="Score" type="Label" parent="UI" unique_id=860970447]
 anchors_preset = 5

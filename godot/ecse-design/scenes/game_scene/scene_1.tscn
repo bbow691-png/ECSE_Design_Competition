@@ -90,8 +90,7 @@ offset_right = -1124.0
 offset_bottom = -62.0
 input_enabled = true
 lane_num = 1
-miss_window = 0.2
-game_scene_names = Array[String](["Scene1"])
+spawn_distance = 500.0
 
 [node name="Player2" parent="Foreground" unique_id=2092615904 instance=ExtResource("7_ybqas")]
 z_index = 15
@@ -99,7 +98,7 @@ offset_left = 1152.0
 offset_top = 761.0
 offset_right = -95.0
 offset_bottom = -19.0
-game_scene_names = Array[String](["Scene1"])
+spawn_distance = 500.0
 
 [node name="FrogChar" parent="Foreground" unique_id=128235790 instance=ExtResource("5_52ejm")]
 position = Vector2(1416.0001, 625)

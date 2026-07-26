@@ -64,6 +64,7 @@ func _ready() -> void:
 	beat_placeholder.visible = false
 
 	var current_scene := get_tree().current_scene
+	print(current_scene.name)
 	is_in_game_scene = current_scene != null and game_scene_names.has(current_scene.name)
 
 	if not is_in_game_scene:

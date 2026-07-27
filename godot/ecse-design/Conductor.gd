@@ -46,7 +46,7 @@ var fade_tween: Tween
 var current_beatmap: Dictionary = {}
 var current_note_index: int = 0
 var is_playing: bool = false
-var spawn_lead_time: float = 4 # Seconds before hit time to spawn the note
+var spawn_lead_time: float = 2.0 # Seconds before hit time to spawn the note
 
 
 func _ready() -> void:
@@ -96,7 +96,7 @@ func play_song(song_name: String, fade_time: float = 1.0) -> void:
 	if error != OK:
 		print("JSON Parse Error: ", json.get_error_message())
 		return
-
+	
 	var beatmap: Dictionary = json.get_data()
 	var song_bpm: float = beatmap.get("bpm", beatmap.get("tempo_bpm", bpm))
 
@@ -151,11 +151,12 @@ func _load_audio(song_name: String) -> AudioStream:
 	# 1. Try finding and loading an OGG file first
 	if FileAccess.file_exists(ogg_path) or FileAccess.file_exists(ogg_path + ".import"):
 		if ResourceLoader.exists(ogg_path):
+			
 			return load(ogg_path) as AudioStream
 		else:
 			# Fallback if Godot hasn't imported it properly yet
 			return AudioStreamOggVorbis.load_from_file(ogg_path)
-
+	
 	# 2. Try finding and loading an MP3 file
 	if FileAccess.file_exists(mp3_path) or FileAccess.file_exists(mp3_path + ".import"):
 		if ResourceLoader.exists(mp3_path):
@@ -173,12 +174,16 @@ func _load_audio(song_name: String) -> AudioStream:
 	print("Audio file (neither .ogg nor .mp3) found for: ", song_name)
 	return null
 
+func _get_target_volume(song_name: String) -> float:
+	return -2 if song_name == "mainmenu" else -12.5
 
 func _play_stream_with_fade(song_name: String, new_bpm: float, fade_time: float = 1.0, has_beatmap: bool = false) -> void:
 	var new_stream = _load_audio(song_name)
 	if not new_stream:
 		return
-
+	
+	var target_volume: float = _get_target_volume(song_name)
+	
 	if fade_tween and fade_tween.is_running():
 		fade_tween.kill()
 
@@ -203,7 +208,7 @@ func _play_stream_with_fade(song_name: String, new_bpm: float, fade_time: float 
 
 	if fade_time <= 0.0:
 		fading_player.stop()
-		active_player.volume_db = 0.0
+		active_player.volume_db = target_volume
 		return
 
 	fade_tween = create_tween()
@@ -213,12 +218,11 @@ func _play_stream_with_fade(song_name: String, new_bpm: float, fade_time: float 
 		.set_trans(Tween.TRANS_SINE)\
 		.set_ease(Tween.EASE_IN)
 
-	fade_tween.tween_property(active_player, "volume_db", 0.0, fade_time)\
+	fade_tween.tween_property(active_player, "volume_db", target_volume, fade_time)\
 		.set_trans(Tween.TRANS_SINE)\
 		.set_ease(Tween.EASE_OUT)
 
 	fade_tween.chain().tween_callback(fading_player.stop)
-
 
 func _process(delta: float) -> void:
 	if is_buffering:

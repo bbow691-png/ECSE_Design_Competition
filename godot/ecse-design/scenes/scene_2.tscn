@@ -270,6 +270,7 @@ offset_bottom = -62.0
 input_enabled = true
 lane_num = 1
 spawn_distance = 500.0
+near_window = 0.21
 game_scene_names = Array[String](["scene_2"])
 
 [node name="Player2" parent="Foreground" unique_id=2060493555 instance=ExtResource("6_8egj7")]

@@ -1,0 +1,4 @@
+keyboard==0.13.5
+numpy==2.5.1
+pyserial==3.5
+soundcard==0.4.6

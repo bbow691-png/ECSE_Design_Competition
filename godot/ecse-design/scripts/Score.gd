@@ -45,11 +45,15 @@ func _load_highscore() -> void:
 		return
 	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
 	highscore = file.get_32()
+	score_changed.emit(score)
+
 	file.close()
 
 
 func add_score(add: int) -> void:
 	score += add
+	score_changed.emit(score)
+
 	
 
 # Call once the song is over. Returns true if this run set a new

@@ -3,15 +3,34 @@
 [ext_resource type="Texture2D" uid="uid://bucngrjxqtngi" path="res://assets/Spritesheets/WorldMap.png" id="1_5m4q6"]
 [ext_resource type="Script" uid="uid://cd8gu8tj54jc4" path="res://scenes/map_scene.gd" id="1_vlip3"]
 [ext_resource type="Script" uid="uid://bb3jmh0hkj0ex" path="res://path_follow_2d.gd" id="2_vlip3"]
+[ext_resource type="Shader" uid="uid://bsyxecvbjqjq8" path="res://scenes/menu/menu.gdshader" id="3_wwgyy"]
 [ext_resource type="PackedScene" uid="uid://b205bjmqdobp4" path="res://scenes/game_scene/map.tscn" id="5_jlqwp"]
 [ext_resource type="PackedScene" uid="uid://clronqky8n3rt" path="res://scenes/game_scene/player.tscn" id="5_vsh3c"]
 [ext_resource type="PackedScene" uid="uid://bne45u7wnoscd" path="res://pause_menu.tscn" id="6_jlqwp"]
+[ext_resource type="Script" uid="uid://bwvv2jrlbadt8" path="res://scenes/canvas_layer.gd" id="7_5gqha"]
+[ext_resource type="Texture2D" uid="uid://vswnxxec0dd5" path="res://assets/images/IMG_1009.PNG" id="8_raa3b"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5gqha"]
+shader = ExtResource("3_wwgyy")
+shader_parameter/blur_amount = 2.5
 
 [sub_resource type="Curve2D" id="Curve2D_eobcy"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, 535, 727, 0, 0, 0, 0, 552, 493, 0, 0, 0, 0, 861, 492, 0, 0, 0, 0, 867, 580, 0, 0, 0, 0, 863, 635, 0, 0, 0, 0, 1290, 633, 0, 0, 0, 0, 1285, 549, 0, 0, 0, 0, 1584, 542)
 }
 point_count = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wwgyy"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 0, 1)
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
 
 [node name="map_scene" type="Control" unique_id=423115192]
 layout_mode = 3
@@ -30,10 +49,28 @@ offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("1_5m4q6")
 
+[node name="BackBufferCopy" type="BackBufferCopy" parent="Background/TextureRect" unique_id=192257945]
+position = Vector2(974.49994, 560)
+scale = Vector2(10.155001, 5.71)
+copy_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Background/TextureRect/BackBufferCopy" unique_id=106354882]
+material = SubResource("ShaderMaterial_5gqha")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=336107202]
 position = Vector2(960, 540)
 
 [node name="Path2D" type="Path2D" parent="." unique_id=1259892987]
+visible = false
 curve = SubResource("Curve2D_eobcy")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D" unique_id=2104064849]
@@ -60,4 +97,62 @@ offset_right = -634.0
 offset_bottom = 69.0
 input_enabled = true
 
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1925891092]
+script = ExtResource("7_5gqha")
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer" unique_id=834798538]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/PanelContainer" unique_id=1522904235]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 36
+
+[node name="level1" type="Button" parent="CanvasLayer/PanelContainer/VBoxContainer" unique_id=1015184038]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_hover_color = Color(0.9490196, 0.9490196, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 64
+theme_override_styles/focus = SubResource("StyleBoxFlat_wwgyy")
+text = "LEVEL 1"
+flat = true
+
+[node name="level2" type="Button" parent="CanvasLayer/PanelContainer/VBoxContainer" unique_id=612267791]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_hover_color = Color(0.9490196, 0.9490196, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 64
+theme_override_styles/focus = SubResource("StyleBoxFlat_wwgyy")
+text = "LEVEL 2"
+flat = true
+
+[node name="CursorIcon" type="TextureRect" parent="CanvasLayer" unique_id=1912678507]
+z_index = 200
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -159.0
+offset_top = -148.0
+offset_right = 159.0
+offset_bottom = 148.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.5707964
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("8_raa3b")
+
 [node name="PauseMenu" parent="." unique_id=943736795 instance=ExtResource("6_jlqwp")]
+visible = false

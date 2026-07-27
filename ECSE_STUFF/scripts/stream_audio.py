@@ -5,9 +5,8 @@ import socket
 import re
 import threading
 import time
-import keyboard
 
-PORT = "COM9" # MAKE SURE TO MATCH THIS TO THE PORT YOUR ESP IS CONNECTED TO
+PORT = "COM3" # MAKE SURE TO MATCH THIS TO THE PORT YOUR ESP IS CONNECTED TO
 BAUD = 921600
 SAMPLE_RATE = 22050
 CHUNK_SIZE = 256
@@ -19,23 +18,22 @@ UDP_PORT = 5005
 # Match lines like: HIT:1 (channel only - the game doesn't use hit velocity)
 HIT_PATTERN = re.compile(rb'HIT:(\d+)')
 
-# A serial port can only be opened by one process at a time, and the ESP32
-# link needs to carry audio out and hit events back at the same time, so both
-# directions are handled here in one process instead of splitting them across
-# stream_audio.py and bridge.py.
-
-
 def read_hits(ser, sock, stop_event):
     buf = bytearray()
     while not stop_event.is_set():
         try:
-            chunk = ser.read(max(ser.in_waiting, 1))
+            # Safely check if port is open before reading
+            if not ser.is_open:
+                break
+                
+            in_wait = ser.in_waiting if ser.is_open else 0
+            chunk = ser.read(max(in_wait, 1))
         except Exception:
-            # Port closed out from under us (e.g. main thread errored and
-            # exited the `with serial.Serial(...)` block) - exit quietly.
             break
+
         if not chunk:
             continue
+
         buf.extend(chunk)
         while b"\n" in buf:
             line, _, rest = buf.partition(b"\n")
@@ -47,17 +45,14 @@ def read_hits(ser, sock, stop_event):
                 print(f"Hit: Piezo {channel}")
 
 
-            
-
-
-def stream_loopback(ser):
+def stream_loopback(ser, stop_event):
     speaker = sc.default_speaker()
     mic = sc.get_microphone(speaker.id, include_loopback=True)
     print(f"Capturing from: {speaker.name}")
     print(f"Sample rate: {SAMPLE_RATE}Hz | Port: {ser.port}")
 
     with mic.recorder(samplerate=SAMPLE_RATE, channels=2) as recorder:
-        while True:
+        while not stop_event.is_set():
             data = recorder.record(numframes=CHUNK_SIZE)
             data_int16 = (data * 32767).astype(np.int16)
             ser.write(data_int16.tobytes())
@@ -66,23 +61,42 @@ def stream_loopback(ser):
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     stop_event = threading.Event()
+    ser = None
+    reader_thread = None
 
-    # timeout=0.1 bounds the reader thread's blocking read() calls; it has no
-    # effect on ser.write() calls made from the main thread below.
-    with serial.Serial(PORT, BAUD, timeout=0.1) as ser:
+    try:
+        ser = serial.Serial(PORT, BAUD, timeout=0.1)
         time.sleep(2)
 
-        reader_thread = threading.Thread(target=read_hits, args=(ser, sock, stop_event), daemon=True)
+        reader_thread = threading.Thread(
+            target=read_hits, args=(ser, sock, stop_event), daemon=True
+        )
         reader_thread.start()
 
         print("Streaming started (audio out + hit events in) — press Ctrl+C to stop")
-        stream_loopback(ser)
+        stream_loopback(ser, stop_event)
+
+    finally:
+        print("\nCleaning up resources...")
+        # 1. Signal thread to exit loops
+        stop_event.set()
+
+        # 2. Give the thread time to release the serial port
+        if reader_thread and reader_thread.is_alive():
+            reader_thread.join(timeout=1.0)
+
+        # 3. Explicitly close port and socket safely
+        if ser and ser.is_open:
+            ser.close()
+            print("Serial port closed successfully.")
+
+        sock.close()
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\nStreaming stopped")
+        print("Streaming stopped by user.")
     except serial.SerialException as e:
         print(f"Serial error: {e}")

@@ -44,9 +44,9 @@ var fade_tween: Tween
 
 # --- Beatmap / Note Spawning ---
 var current_beatmap: Dictionary = {}
-var current_note_index: int = 0
+var current_note_index: int = 08
 var is_playing: bool = false
-var spawn_lead_time: float = 2.0 # Seconds before hit time to spawn the note
+var spawn_lead_time: float = 1.0 # Seconds before hit time to spawn the note
 
 
 func _ready() -> void:
@@ -175,7 +175,7 @@ func _load_audio(song_name: String) -> AudioStream:
 	return null
 
 func _get_target_volume(song_name: String) -> float:
-	return -2 if song_name == "mainmenu" else -12.5
+	return -4 if song_name == "mainmenu" else -6
 
 func _play_stream_with_fade(song_name: String, new_bpm: float, fade_time: float = 1.0, has_beatmap: bool = false) -> void:
 	var new_stream = _load_audio(song_name)

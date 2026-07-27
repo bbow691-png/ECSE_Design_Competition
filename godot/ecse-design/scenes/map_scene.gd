@@ -1,6 +1,6 @@
 extends Control
 
-@export var map_music: String
+@export var map_music: String = "mainmenu"
 
 @onready var camera: Camera2D = $Camera2D
 var camera_tween: Tween

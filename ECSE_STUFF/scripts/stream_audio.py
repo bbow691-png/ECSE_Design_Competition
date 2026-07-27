@@ -25,7 +25,7 @@ def read_hits(ser, sock, stop_event):
             # Safely check if port is open before reading
             if not ser.is_open:
                 break
-                
+
             in_wait = ser.in_waiting if ser.is_open else 0
             chunk = ser.read(max(in_wait, 1))
         except Exception:
@@ -73,8 +73,16 @@ def main():
         )
         reader_thread.start()
 
-        print("Streaming started (audio out + hit events in) — press Ctrl+C to stop")
-        stream_loopback(ser, stop_event)
+        print("Listening for piezo hits — press Ctrl+C to stop")
+        # stream_loopback(ser, stop_event)
+
+        # Keep the main thread alive indefinitely while read_hits() runs in
+        # the background. Without this, main() falls straight through to
+        # `finally` right after starting the thread (since stream_loopback
+        # is disabled) and the program shuts down almost immediately instead
+        # of staying up to listen for piezo hits.
+        while not stop_event.is_set():
+            time.sleep(0.5)
 
     finally:
         print("\nCleaning up resources...")

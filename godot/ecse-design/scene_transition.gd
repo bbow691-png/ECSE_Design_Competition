@@ -20,11 +20,7 @@ func fade_to_scene(target_scene: String, fade_duration: float = 0.5) -> void:
 		
 		# Once the audio is silent, pause the song and reset the volume invisibly
 		# so the next scene's song doesn't start off muted!
-		audio_tween.finished.connect(func():
-			Conductor.pause_song()
-			if Conductor.active_player:
-				Conductor.active_player.volume_db = 0.0
-		)
+		Conductor.pause_song()
 
 	# 2. Fade to Black
 	tween.tween_property(color_rect, "color:a", 1.0, fade_duration)\
